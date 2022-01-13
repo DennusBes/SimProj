@@ -6,8 +6,6 @@ from SensorModel import SensorModel
 
 import xmltodict
 
-dimensions = (90, 90)
-
 
 def sensor_draw(agent):
     return {"Shape": "circle", "r": 1, "Filled": "true", "Layer": 0, "Color": agent.color,
@@ -23,6 +21,7 @@ def xml_to_dict(filename):
 
 xmldict = xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml')
 
+dimensions = (100, 100)
 intersection = Intersection(xmldict, dimensions)
 
 dim = intersection.dimensions

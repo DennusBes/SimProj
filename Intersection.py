@@ -37,24 +37,25 @@ class Intersection:
 
     def set_lane_groups(self, kind):
 
-        mid_square = 3
+        mid_square = 5
+        sep = 1
 
         if kind == 'ingress':
             lane_group = IngressLaneGroup
 
-            loc_dict = {1: [self.center[0] - mid_square, self.center[1] + mid_square + 1],
-                        2: [self.center[0] + mid_square + 1, self.center[1] + mid_square],
-                        3: [self.center[0] + mid_square, self.center[1] - mid_square - 1],
-                        4: [self.center[0] - mid_square - 1, self.center[1] - mid_square]}
+            loc_dict = {1: [self.center[0] - mid_square, self.center[1] + mid_square + sep],
+                        2: [self.center[0] + mid_square + sep, self.center[1] + mid_square],
+                        3: [self.center[0] + mid_square, self.center[1] - mid_square - sep],
+                        4: [self.center[0] - mid_square - sep, self.center[1] - mid_square]}
 
 
         elif kind == 'egress':
             lane_group = EgressLaneGroup
 
-            loc_dict = {1: [self.center[0] + mid_square, self.center[1] + mid_square + 1],
-                        2: [self.center[0] + mid_square + 1, self.center[1] - mid_square],
-                        3: [self.center[0] - mid_square, self.center[1] - mid_square - 1],
-                        4: [self.center[0] - mid_square - 1, self.center[1] + mid_square]}
+            loc_dict = {1: [self.center[0] + mid_square, self.center[1] + mid_square + sep],
+                        2: [self.center[0] + mid_square + sep, self.center[1] - mid_square],
+                        3: [self.center[0] - mid_square, self.center[1] - mid_square - sep],
+                        4: [self.center[0] - mid_square - sep, self.center[1] + mid_square]}
 
 
         check_list = eval(f'self.req_{kind}_groups')
