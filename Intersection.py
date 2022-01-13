@@ -34,17 +34,20 @@ class Intersection:
 
         if kind == 'ingress':
             lane_group = IngressLaneGroup
-            loc_dict = {0: [self.center[0] + mid_square, self.center[1] + mid_square +1],
-                        1: [self.center[0] + mid_square + 1, self.center[1] - mid_square],
-                        2: [self.center[0] - mid_square, self.center[1] - mid_square -1],
-                        3: [self.center[0] - mid_square -1, self.center[1] + mid_square]}
+
+            loc_dict = {0: [self.center[0] - mid_square, self.center[1] + mid_square + 1],
+                        1: [self.center[0] + mid_square + 1, self.center[1] + mid_square],
+                        2: [self.center[0] + mid_square, self.center[1] - mid_square - 1],
+                        3: [self.center[0] - mid_square - 1, self.center[1] - mid_square]}
+
 
         elif kind == 'egress':
             lane_group = EgressLaneGroup
-            loc_dict = {0: [self.center[0] - mid_square, self.center[1] + mid_square + 1],
-                        1: [self.center[0] + mid_square + 1, self.center[1] + mid_square],
-                        2: [self.center[0] + mid_square, self.center[1] - mid_square -1],
-                        3: [self.center[0] - mid_square - 1, self.center[1] - mid_square]}
+
+            loc_dict = {0: [self.center[0] + mid_square, self.center[1] + mid_square + 1],
+                        1: [self.center[0] + mid_square + 1, self.center[1] - mid_square],
+                        2: [self.center[0] - mid_square, self.center[1] - mid_square - 1],
+                        3: [self.center[0] - mid_square - 1, self.center[1] + mid_square]}
 
         return [lane_group(i + 1, 41, f'#{"%06x" % random.randint(0, 0xFFFFFF)}', self.xml_dict,
                            loc_dict[i], kind) for i in
