@@ -19,13 +19,16 @@ class SensorModel(Model):
 
             data = eval(f'self.intersection.{lk}_groups')
 
-            dir_keys = {0: (0, +1), 1: (+1, 0), 2: (0, -1), 3: (-1, 0)}
+            dir_keys = {1: (0, +1), 2: (+1, 0), 3: (0, -1), 4: (-1, 0)}
             for counter, lg in enumerate(data):
-                x_pos = lg.lon
-                y_pos = lg.lat
-                length = lg.length
+                if lg is not None:
+                    x_pos = lg.lon
+                    y_pos = lg.lat
+                    length = lg.length
 
-                for j in range(length):
-                    agent = lg
-                    self.grid.place_agent(agent, (
-                        int(x_pos) + dir_keys[counter][0] * j, int(y_pos) + dir_keys[counter][1] * j))
+                    for j in range(length):
+                        agent = lg
+                        self.grid.place_agent(agent, (
+                            int(x_pos) + dir_keys[counter+1][0] * j, int(y_pos) + dir_keys[counter+1][1] * j))
+
+

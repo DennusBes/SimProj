@@ -19,6 +19,9 @@ class LaneGroup:
                            self.xml_dict['topology']['mapData']['intersections']['intersectionGeometry']['laneSet'][
                                'genericLane'] if x['laneAttributes']['sharedWith'] == '0001000000'])
 
-        lane_numbers = list(df[['laneID']][df[f'{self.kind}Approach'].astype(str) == str(self.ID)]['laneID'])
+        # df = df.replace({'egressApproach': {'2': '4'}})
+        # df = df.replace({'ingressApproach': {'2': '4'}})
+
+        lane_numbers = list(df[['laneID']][df[f'{self.kind}Approach'].astype(str) == str(int(self.ID))]['laneID'])
 
         return [Lane(x) for x in lane_numbers]
