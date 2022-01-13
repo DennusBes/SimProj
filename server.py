@@ -30,7 +30,6 @@ dim = intersection.dimensions
 canvas_element = CanvasGrid(sensor_draw, dim[0], dim[1], (dim[0] * 10), (dim[1] * 10))
 
 model_params = {
-    "ingress": UserSettableParameter("slider", "Amount of lanes", 1, 1, 4, 1),
     "length": UserSettableParameter("number", "Road length", 10),
     "intersection": intersection
 }
