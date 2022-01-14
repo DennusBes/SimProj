@@ -19,16 +19,16 @@ class Intersection:
         self.egress_groups = self.set_lane_groups('egress')
         self.lane_df = None
 
-
     def set_group_numbers(self, kind):
         self.lane_df = pd.DataFrame([x for x in
-                           self.xml_dict['topology']['mapData']['intersections']['intersectionGeometry']['laneSet'][
-                               'genericLane'] if x['laneAttributes']['sharedWith'] == '0001000000'])
+                                     self.xml_dict['topology']['mapData']['intersections']['intersectionGeometry'][
+                                         'laneSet'][
+                                         'genericLane'] if x['laneAttributes']['sharedWith'] == '0001000000'])
 
+        # change = {'1': '3', '3': '1', '2':'4'}
 
-        #self.lane_df = self.lane_df.replace({'egressApproach': {'3': '4', '2':'3', '1':'2'}})
-        #self.lane_df = self.lane_df.replace({'ingressApproach': {'3': '4', '2':'3', '1':'2'}})
-
+        # self.lane_df = self.lane_df.replace(
+        # {'ingressApproach': change, 'egressApproach': change})
 
         l = list(set(list(set(eval(f'self.lane_df.{kind}Approach')))))
         l.remove(np.NaN)
@@ -57,7 +57,6 @@ class Intersection:
                         3: [self.center[0] - mid_square, self.center[1] - mid_square - sep],
                         4: [self.center[0] - mid_square - sep, self.center[1] + mid_square]}
 
-
         check_list = eval(f'self.req_{kind}_groups')
         return [lane_group(i, 10, f'#{"%06x" % random.randint(0, 0xFFFFFF)}', self.lane_df,
-                           loc_dict[i], kind) if i in check_list else None for i in list(range(1,5))]
+                           loc_dict[i], kind) if i in check_list else None for i in list(range(1, 5))]
