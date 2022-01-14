@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from LaneGroup import LaneGroup
 import random
 from IngressLaneGroup import IngressLaneGroup
 from EgressLaneGroup import EgressLaneGroup
@@ -8,37 +7,42 @@ from EgressLaneGroup import EgressLaneGroup
 
 class Intersection:
 
-    def __init__(self, xml_dict, dimensions):
+    def __init__(self, xml_dict, dimensions, manipulation=None):
 
         self.xml_dict = xml_dict
         self.center = (dimensions[0] / 2, dimensions[1] / 2)
         self.dimensions = dimensions
+        self.lane_df = None
+        self.manipulate_intersection(manipulation)
         self.req_ingress_groups = self.set_group_numbers('ingress')
         self.req_egress_groups = self.set_group_numbers('egress')
         self.ingress_groups = self.set_lane_groups('ingress')
         self.egress_groups = self.set_lane_groups('egress')
-        self.lane_df = None
 
-    def set_group_numbers(self, kind):
+    def manipulate_intersection(self, change):
+
         self.lane_df = pd.DataFrame([x for x in
                                      self.xml_dict['topology']['mapData']['intersections']['intersectionGeometry'][
                                          'laneSet'][
                                          'genericLane'] if x['laneAttributes']['sharedWith'] == '0001000000'])
 
-        # change = {'1': '3', '3': '1', '2':'4'}
+        self.lane_df = self.lane_df.replace(
+            {'ingressApproach': change, 'egressApproach': change})
 
-        # self.lane_df = self.lane_df.replace(
-        # {'ingressApproach': change, 'egressApproach': change})
+    def set_group_numbers(self, kind):
 
-        l = list(set(list(set(eval(f'self.lane_df.{kind}Approach')))))
-        l.remove(np.NaN)
+        gn = list(set(list(set(eval(f'self.lane_df.{kind}Approach')))))
+        gn.remove(np.NaN)
 
-        return sorted([int(x) for x in l])
+        return sorted([int(x) for x in gn])
 
     def set_lane_groups(self, kind):
 
         mid_square = 5
         sep = 1
+
+        loc_dict = None
+        lane_group = None
 
         if kind == 'ingress':
             lane_group = IngressLaneGroup

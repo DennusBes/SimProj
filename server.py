@@ -22,7 +22,7 @@ def xml_to_dict(filename):
 xmldict = xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml')
 
 dimensions = (100, 100)
-intersection = Intersection(xmldict, dimensions)
+intersection = Intersection(xmldict, dimensions, {'1': '3', '3': '1', '2':'4'})
 
 dim = intersection.dimensions
 
