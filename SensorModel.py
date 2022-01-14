@@ -20,6 +20,7 @@ class SensorModel(Model):
             data = eval(f'self.intersection.{lk}_groups')
 
             dir_keys = {1: (0, +1), 2: (+1, 0), 3: (0, -1), 4: (-1, 0)}
+
             for counter, lg in enumerate(data):
                 if lg is not None:
                     x_pos = lg.lon
