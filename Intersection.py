@@ -16,6 +16,12 @@ class Intersection:
         self.manipulate_intersection(manipulation)
         self.req_ingress_groups = self.set_group_numbers('ingress')
         self.req_egress_groups = self.set_group_numbers('egress')
+
+        # calculate the max amount of lanes next to each other for this intersection
+        lanes_per_group = [
+            [len(list(self.lane_df[['laneID']][self.lane_df[f'{kind}Approach'].astype(str) == str(int(i))]['laneID']))
+             for i in range(1, 5)] for kind in ['ingress', 'egress']]
+        self.max_group_width = max([lanes_per_group[0][i] + lanes_per_group[1][i] for i in range(4)])
         self.ingress_groups = self.set_lane_groups('ingress')
         self.egress_groups = self.set_lane_groups('egress')
 
@@ -38,7 +44,7 @@ class Intersection:
 
     def set_lane_groups(self, kind):
 
-        mid_square = 5
+        mid_square = self.max_group_width - 2
         sep = 2
 
         loc_dict = None
