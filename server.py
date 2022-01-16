@@ -3,13 +3,14 @@ from mesa.visualization.modules import CanvasGrid, ChartModule
 from mesa.visualization.UserParam import UserSettableParameter
 from Intersection import Intersection
 from SensorModel import SensorModel
+from RoadModel import RoadModel
 
 import xmltodict
 
 
 def sensor_draw(agent):
-    return {"Shape": "circle", "r": 1, "Filled": "true", "Layer": 0, "Color": agent.color,
-            'text': [x.ID for x in agent.lanes], 'text_color': 'black'}
+    return {"Shape": "rect", "w": 0.9, 'h':0.9, "Filled": "true", "Layer": 0, "Color": agent.color,
+            'text': agent.ID, 'text_color': 'white'}
 
 
 def xml_to_dict(filename):
@@ -19,9 +20,10 @@ def xml_to_dict(filename):
     return xmldict
 
 
-xmldict = xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml')
+xmldict = xml_to_dict('79190154_BOS210_ITF_COMPLETE.xml')
 
 dimensions = (100, 100)
+# {'1': '3', '3': '1', '2':'4'}
 intersection = Intersection(xmldict, dimensions, {'1': '3', '3': '1', '2':'4'})
 
 dim = intersection.dimensions
@@ -34,7 +36,7 @@ model_params = {
 }
 
 server = ModularServer(
-    SensorModel,
+    RoadModel,
     [canvas_element],
     "Den Bosch Kruispunt",
     model_params
