@@ -8,7 +8,7 @@ from RoadModel import RoadModel
 import xmltodict
 
 
-def sensor_draw(agent):
+def lane_draw(agent):
     return {"Shape": "rect", "w": 0.9, 'h':0.9, "Filled": "true", "Layer": 0, "Color": agent.color,
             'text': agent.ID, 'text_color': 'white'}
 
@@ -24,11 +24,11 @@ xmldict = xml_to_dict('79190154_BOS210_ITF_COMPLETE.xml')
 
 dimensions = (100, 100)
 # {'1': '3', '3': '1', '2':'4'}
-intersection = Intersection(xmldict, dimensions, {'1': '3', '3': '1', '2':'4'})
+intersection = Intersection(xmldict, dimensions)
 
 dim = intersection.dimensions
 
-canvas_element = CanvasGrid(sensor_draw, dim[0], dim[1], (dim[0] * 10), (dim[1] * 10))
+canvas_element = CanvasGrid(lane_draw, dim[0], dim[1], (dim[0] * 10), (dim[1] * 10))
 
 model_params = {
     "length": UserSettableParameter("number", "Road length", 10),
