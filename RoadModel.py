@@ -30,19 +30,11 @@ class RoadModel(Model):
                     lanes = lg.lanes
 
                     for j in range(length):
-                        x_pos = lg.lon
-                        y_pos = lg.lat
 
-                        x_pos = (int(x_pos) + dir_keys[counter + 1][0] * j)
-                        y_pos = (int(y_pos) + dir_keys[counter + 1][1] * j)
+                        x_pos = (int(lg.lon) + dir_keys[counter + 1][0] * j)
+                        y_pos = (int(lg.lat) + dir_keys[counter + 1][1] * j)
 
                         for i, lane in enumerate(lanes):
-                            if lk == 'ingress':
-                                self.grid.place_agent(lane, (
-                                    x_pos + ingress_dir_keys[counter + 1][0] * i,
-                                    y_pos + ingress_dir_keys[counter + 1][1] * i))
-
-                            elif lk == 'egress':
-                                self.grid.place_agent(lane, (
-                                    x_pos + egress_dir_keys[counter + 1][0] * i,
-                                    y_pos + egress_dir_keys[counter + 1][1] * i))
+                            self.grid.place_agent(lane, (
+                                    x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
+                                    y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
