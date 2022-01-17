@@ -2,7 +2,6 @@ from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.modules import CanvasGrid, ChartModule
 from mesa.visualization.UserParam import UserSettableParameter
 from Intersection import Intersection
-from SensorModel import SensorModel
 from RoadModel import RoadModel
 
 import xmltodict
@@ -25,7 +24,7 @@ xmldict = xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml')
 dimensions = (101, 101)
 
 # {'1': '3', '3': '1', '2':'4'}
-intersection = Intersection(xmldict, dimensions)
+intersection = Intersection(xmldict, dimensions, {'1':'2', '2':'3', '3':'4'})
 
 dim = intersection.dimensions
 

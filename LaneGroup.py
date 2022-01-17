@@ -16,6 +16,38 @@ class LaneGroup:
         self.intersection = intersection
         self.lanes = self.get_lanes()
         self.width = len(self.lanes)
+        self.order_lanes()
+
+    def order_lanes(self):
+        left = []
+        right = []
+        straight = []
+        left_straight = []
+        right_straight = []
+
+        if self.kind == 'ingress':
+            for lane in self.lanes:
+
+                if lane.connections is not None:
+
+                    maneuvers = list(set([p['maneuver'] for p in lane.connections]))
+
+                    if '010000000000' in maneuvers:
+                        if '100000000000' in maneuvers:
+                            right_straight.append(lane)
+                            continue
+                        right.append(lane)
+
+                    elif '001000000000' in maneuvers:
+                        if '100000000000' in maneuvers:
+                            left_straight.append(lane)
+                            continue
+                        left.append(lane)
+
+                    elif '100000000000' in maneuvers:
+                        straight.append(lane)
+
+            self.lanes = right + right_straight + straight + left_straight + left
 
     def get_lane_connections(self, id):
 
@@ -46,6 +78,10 @@ class LaneGroup:
         except KeyError:
             connection = None
 
+
+        for k,v in connection_dict.items():
+            print(k,v)
+            print()
         return connection
 
     def get_lanes(self):
