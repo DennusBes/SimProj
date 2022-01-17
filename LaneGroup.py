@@ -1,5 +1,3 @@
-import pandas as pd
-import numpy as np
 from Lane import Lane
 
 
@@ -54,7 +52,7 @@ class LaneGroup:
         else:
             self.lanes = right[::-1] + right_straight[::-1] + straight[::-1] + left_straight[::-1] + left[::-1]
 
-    def get_lane_connections(self, id):
+    def get_lane_connections(self, lane_id):
 
         xml = self.intersection.xml_dict['topology']['mapData']['intersections']['intersectionGeometry']['laneSet'][
             'genericLane']
@@ -96,7 +94,7 @@ class LaneGroup:
                     egress_dict[int(i['connecting_lane'])] = [payload]
 
         try:
-            return eval(f"{self.kind}_dict[id]")
+            return eval(f"{self.kind}_dict[lane_id]")
         except KeyError:
             return {}
 
