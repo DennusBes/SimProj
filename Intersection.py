@@ -30,7 +30,7 @@ class Intersection:
         self.lane_df = pd.DataFrame([x for x in
                                      self.xml_dict['topology']['mapData']['intersections']['intersectionGeometry'][
                                          'laneSet'][
-                                         'genericLane'] if x['laneAttributes']['sharedWith'] == '0001000000'])
+                                         'genericLane'] if x['laneAttributes']['sharedWith'][3] == '1'])
 
         self.lane_df = self.lane_df.replace(
             {'ingressApproach': change, 'egressApproach': change})

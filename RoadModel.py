@@ -34,9 +34,7 @@ class RoadModel(Model):
                         x_pos = (int(lg.lon) + dir_keys[counter + 1][0] * j)
                         y_pos = (int(lg.lat) + dir_keys[counter + 1][1] * j)
 
-
                         for i, lane in enumerate(lanes):
-
                             self.grid.place_agent(lane, (
-                                    x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
-                                    y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
+                                x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
+                                y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))

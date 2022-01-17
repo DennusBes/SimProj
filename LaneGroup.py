@@ -18,49 +18,60 @@ class LaneGroup:
         self.width = len(self.lanes)
         self.order_lanes()
 
-    def order_lanes(self):
+        if self.kind == 'egress':
+            for x in self.lanes:
+                print(x.ID, x.connections)
+
+    def order_lanes(self, flip = True):
         left = []
         right = []
         straight = []
         left_straight = []
         right_straight = []
 
+        for lane in self.lanes:
+
+            if lane.connections is not None:
+
+                maneuvers = list(set([p['maneuver'] for p in lane.connections]))
+
+                if '010000000000' in maneuvers:
+                    if '100000000000' in maneuvers:
+                        right_straight.append(lane)
+                        continue
+                    right.append(lane)
+
+                elif '001000000000' in maneuvers:
+                    if '100000000000' in maneuvers:
+                        left_straight.append(lane)
+                        continue
+                    left.append(lane)
+
+                elif '100000000000' in maneuvers:
+                    straight.append(lane)
+
         if self.kind == 'ingress':
-            for lane in self.lanes:
-
-                if lane.connections is not None:
-
-                    maneuvers = list(set([p['maneuver'] for p in lane.connections]))
-
-                    if '010000000000' in maneuvers:
-                        if '100000000000' in maneuvers:
-                            right_straight.append(lane)
-                            continue
-                        right.append(lane)
-
-                    elif '001000000000' in maneuvers:
-                        if '100000000000' in maneuvers:
-                            left_straight.append(lane)
-                            continue
-                        left.append(lane)
-
-                    elif '100000000000' in maneuvers:
-                        straight.append(lane)
 
             self.lanes = right + right_straight + straight + left_straight + left
+        else:
+            self.lanes = right[::-1]  + right_straight[::-1] + straight[::-1] + left_straight[::-1] + left[::-1]
+
+        if flip:
+            self.lanes = self.lanes[::-1]
+
 
     def get_lane_connections(self, id):
 
         xml = self.intersection.xml_dict['topology']['mapData']['intersections']['intersectionGeometry']['laneSet'][
             'genericLane']
 
-        connection_dict = {}
+        ingress_dict = {}
         for x in xml:
 
-            if x['laneAttributes']['sharedWith'] == '0001000000':
+            if x['laneAttributes']['sharedWith'][3] == '1':
 
                 try:
-                    connection_dict[int(x['laneID'])] = [
+                    ingress_dict[int(x['laneID'])] = [
                         {'connecting_lane': x['connectsTo']['connection']['connectingLane']['lane'],
                          'maneuver': x['connectsTo']['connection']['connectingLane']['maneuver']}]
                 except TypeError:
@@ -69,20 +80,35 @@ class LaneGroup:
                     for i in x['connectsTo']['connection']:
                         temp_list.append({'connecting_lane': i['connectingLane']['lane'],
                                           'maneuver': i['connectingLane']['maneuver']})
-                    connection_dict[int(x['laneID'])] = temp_list
+                    ingress_dict[int(x['laneID'])] = temp_list
                 except KeyError:
                     continue
 
+        egress_dict = {}
+        for k, v in ingress_dict.items():
+
+            for i in v:
+
+                payload = {'connecting_lane': k, 'maneuver': i['maneuver']}
+
+                if payload['maneuver'] == '010000000000':
+                    payload['maneuver'] = '001000000000'
+                elif payload['maneuver'] == '001000000000':
+                    payload['maneuver'] = '010000000000'
+
+                try:
+                    egress_dict[int(i['connecting_lane'])].append(payload)
+                except KeyError:
+                    egress_dict[int(i['connecting_lane'])] = [payload]
+
+
+        print(f"{ingress_dict=},\n{egress_dict=}")
+
+
         try:
-            connection = connection_dict[id]
+            return eval(f"{self.kind}_dict[id]")
         except KeyError:
-            connection = None
-
-
-        for k,v in connection_dict.items():
-            print(k,v)
-            print()
-        return connection
+            return {}
 
     def get_lanes(self):
         df = self.lane_df
