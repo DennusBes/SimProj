@@ -69,4 +69,4 @@ class Intersection:
 
         check_list = eval(f'self.req_{kind}_groups')
         return [lane_group(i, 46, self.lane_df,
-                           loc_dict[i], kind) if i in check_list else None for i in list(range(1, 5))]
+                           loc_dict[i], kind, self) if i in check_list else None for i in list(range(1, 5))]
