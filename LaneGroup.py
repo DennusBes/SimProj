@@ -18,11 +18,7 @@ class LaneGroup:
         self.width = len(self.lanes)
         self.order_lanes()
 
-        if self.kind == 'egress':
-            for x in self.lanes:
-                print(x.ID, x.connections)
-
-    def order_lanes(self, flip = True):
+    def order_lanes(self, flip=True):
         left = []
         right = []
         straight = []
@@ -56,10 +52,7 @@ class LaneGroup:
             if flip:
                 self.lanes = self.lanes[::-1]
         else:
-            self.lanes = right[::-1]  + right_straight[::-1] + straight[::-1] + left_straight[::-1] + left[::-1]
-
-
-
+            self.lanes = right[::-1] + right_straight[::-1] + straight[::-1] + left_straight[::-1] + left[::-1]
 
     def get_lane_connections(self, id):
 
@@ -101,10 +94,6 @@ class LaneGroup:
                     egress_dict[int(i['connecting_lane'])].append(payload)
                 except KeyError:
                     egress_dict[int(i['connecting_lane'])] = [payload]
-
-
-        print(f"{ingress_dict=},\n{egress_dict=}")
-
 
         try:
             return eval(f"{self.kind}_dict[id]")
