@@ -53,11 +53,12 @@ class LaneGroup:
         if self.kind == 'ingress':
 
             self.lanes = right + right_straight + straight + left_straight + left
+            if flip:
+                self.lanes = self.lanes[::-1]
         else:
             self.lanes = right[::-1]  + right_straight[::-1] + straight[::-1] + left_straight[::-1] + left[::-1]
 
-        if flip:
-            self.lanes = self.lanes[::-1]
+
 
 
     def get_lane_connections(self, id):
