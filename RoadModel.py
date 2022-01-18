@@ -1,6 +1,8 @@
 from mesa import Model
 from mesa.space import SingleGrid
 
+from FillerRoad import FillerRoad
+
 
 class RoadModel(Model):
 
@@ -10,9 +12,14 @@ class RoadModel(Model):
         self.length = length
         self.intersection = intersection
         self.grid = SingleGrid(self.intersection.dimensions[0], self.intersection.dimensions[1], torus=False)
-        self.create_road()
+        self.create_roads()
+        self.create_filler_roads()
 
-    def create_road(self):
+    def create_roads(self):
+        """ Places the lane agents on the canvas
+
+        """
+
 
         for lk in ['ingress', 'egress']:
 
@@ -38,3 +45,24 @@ class RoadModel(Model):
                             self.grid.place_agent(lane, (
                                 x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
                                 y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
+
+    def create_filler_roads(self):
+
+        """ place FillerRoad agents between the lanes
+
+        """
+
+        x,y = self.intersection.center
+        x,y = int(x),int(y)
+        mid_square = self.intersection.mid_square
+        sep = self.intersection.sep
+
+        sep = sep -1
+        lst = list(range(x-mid_square-sep,x+1+mid_square+sep))
+
+        for i in lst:
+            for j in lst:
+                self.grid.place_agent(FillerRoad(i+j),(i,j))
+
+
+

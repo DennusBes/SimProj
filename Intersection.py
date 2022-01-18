@@ -1,8 +1,8 @@
-import pandas as pd
 import numpy as np
-import random
-from IngressLaneGroup import IngressLaneGroup
+import pandas as pd
+
 from EgressLaneGroup import EgressLaneGroup
+from IngressLaneGroup import IngressLaneGroup
 
 
 class Intersection:
@@ -22,10 +22,19 @@ class Intersection:
             [len(list(self.lane_df[['laneID']][self.lane_df[f'{kind}Approach'].astype(str) == str(int(i))]['laneID']))
              for i in range(1, 5)] for kind in ['ingress', 'egress']]
         self.max_group_width = max([lanes_per_group[0][i] + lanes_per_group[1][i] for i in range(4)])
+
+        self.mid_square = self.max_group_width - 2
+        self.sep = 1
         self.ingress_groups = self.set_lane_groups('ingress')
         self.egress_groups = self.set_lane_groups('egress')
 
     def manipulate_intersection(self, change):
+        """ change the position on lanegroups on the intersection
+
+        Args:
+            change: a dictionary of what lanegroups should be swapped
+
+        """
 
         self.lane_df = pd.DataFrame([x for x in
                                      self.xml_dict['topology']['mapData']['intersections']['intersectionGeometry'][
@@ -36,6 +45,14 @@ class Intersection:
             {'ingressApproach': change, 'egressApproach': change})
 
     def set_group_numbers(self, kind):
+        """ returns a list with the numbers of the lanegroups that should be created for ingress/egress
+
+        Args:
+            kind: ingress or egress
+
+        Returns: a list of the numbers of lanegroups
+
+        """
 
         gn = list(set(list(set(eval(f'self.lane_df.{kind}Approach')))))
         gn.remove(np.NaN)
@@ -43,9 +60,18 @@ class Intersection:
         return sorted([int(x) for x in gn])
 
     def set_lane_groups(self, kind):
+        """ create the lanegroup objects for this intersection
 
-        mid_square = self.max_group_width - 2
-        sep = 2
+        Args:
+            kind: ingress or egress
+
+        Returns: a list of lanegroup objects
+
+        """
+
+        mid_square = self.mid_square
+        sep = self.sep
+
 
         loc_dict = None
         lane_group = None

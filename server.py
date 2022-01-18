@@ -1,18 +1,38 @@
+import xmltodict
 from mesa.visualization.ModularVisualization import ModularServer
-from mesa.visualization.modules import CanvasGrid, ChartModule
 from mesa.visualization.UserParam import UserSettableParameter
+from mesa.visualization.modules import CanvasGrid
+
+import Lane
 from Intersection import Intersection
 from RoadModel import RoadModel
 
-import xmltodict
-
 
 def lane_draw(agent):
+    """ draw agents on the Mesa canvas
+
+    Args:
+        agent: the agent that gets drawn on the canvas
+
+    """
+
+    if type(agent) == Lane.Lane:
+        text = agent.ID
+    else:
+        text = ''
     return {"Shape": "rect", "w": 0.9, 'h':0.9, "Filled": "true", "Layer": 0, "Color": agent.color,
-            'text': agent.ID, 'text_color': 'white'}
+            'text': text, 'text_color': 'white'}
 
 
 def xml_to_dict(filename):
+    """convert the xml-file to a pyhton dict
+
+    Args:
+        filename: root of the xml-file
+
+    Returns: python dictionary of the xml-file
+
+    """
     with open(filename) as t:
         data = t.read()
         xmldict = xmltodict.parse(data)

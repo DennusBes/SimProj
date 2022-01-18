@@ -12,11 +12,19 @@ class LaneGroup:
         self.lat = loc[1]
         self.kind = kind
         self.intersection = intersection
-        self.lanes = self.get_lanes()
+        self.lanes = None
+        self.get_lanes()
         self.width = len(self.lanes)
         self.order_lanes()
 
     def order_lanes(self, flip=True):
+        """ changes the order of the lanes based on 'maneuvers' in the XML file
+
+        Args:
+            flip: reverses the ingress lane list
+
+        """
+
         left = []
         right = []
         straight = []
@@ -53,6 +61,14 @@ class LaneGroup:
             self.lanes = right[::-1] + right_straight[::-1] + straight[::-1] + left_straight[::-1] + left[::-1]
 
     def get_lane_connections(self, lane_id):
+        """ gets a dictionary of lane connections for a specific lane
+
+        Args:
+            lane_id: the id of the lane
+
+        Returns: a dictionary of lane connections
+
+        """
 
         xml = self.intersection.xml_dict['topology']['mapData']['intersections']['intersectionGeometry']['laneSet'][
             'genericLane']
@@ -96,12 +112,15 @@ class LaneGroup:
         try:
             return eval(f"{self.kind}_dict[lane_id]")
         except KeyError:
-            return {}
+            return None
 
     def get_lanes(self):
+        """ create lanes based on the xml-file
+
+        """
         df = self.lane_df
 
         lane_numbers = list(df[['laneID']][df[f'{self.kind}Approach'].astype(str) == str(int(self.ID))]['laneID'])
 
-        return [Lane(x, self.color, self.kind, self.get_lane_connections(int(x)), self.intersection) for x in
-                lane_numbers]
+        self.lanes = [Lane(x, self.color, self.kind, self.get_lane_connections(int(x)), self.intersection) for x in
+                      lane_numbers]
