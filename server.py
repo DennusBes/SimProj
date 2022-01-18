@@ -20,8 +20,15 @@ def lane_draw(agent):
         text = agent.ID
     else:
         text = ''
-    return {"Shape": "rect", "w": 0.9, 'h':0.9, "Filled": "true", "Layer": 0, "Color": agent.color,
+
+    if agent.shape == 'rect':
+
+        return {"Shape": agent.shape, "w": 0.9, 'h':0.9, "Filled": "true", "Layer": 0, "Color": agent.color,
             'text': text, 'text_color': 'white'}
+    else:
+
+        return {"Shape": agent.shape,'r': 1, "Filled": "true", "Layer": 1, "Color": agent.color,
+                'text': text, 'text_color': 'white'}
 
 
 def xml_to_dict(filename):

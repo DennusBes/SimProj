@@ -1,6 +1,7 @@
 from mesa import Model
 from mesa.space import MultiGrid
 
+from Car import Car
 from FillerRoad import FillerRoad
 
 
@@ -14,6 +15,7 @@ class RoadModel(Model):
         self.grid = MultiGrid(self.intersection.dimensions[0], self.intersection.dimensions[1], torus=False)
         self.create_roads()
         self.create_filler_roads()
+        self.create_vehicle()
 
     def create_roads(self):
         """ Places the lane agents on the canvas
@@ -62,6 +64,13 @@ class RoadModel(Model):
         for i in lst:
             for j in lst:
                 self.grid.place_agent(FillerRoad(i + j), (i, j))
-                print(self.grid.get_cell_list_contents((i, j)))
+
+
+
+    def create_vehicle(self):
+
+        self.grid.place_agent(Car(),(51,51))
+        print(self.grid.get_cell_list_contents((51,51)))
+
 
 

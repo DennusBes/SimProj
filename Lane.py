@@ -6,6 +6,8 @@ class Lane:
         self.intersection = intersection
         self.connections = connections
         self.kind = kind
+        self.shape = 'rect'
+        self.layer = 0
 
 
 
