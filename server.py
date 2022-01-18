@@ -16,7 +16,7 @@ def lane_draw(agent):
 
     """
 
-    if type(agent) == Lane.Lane:
+    if isinstance(agent, Lane.Lane):
         text = agent.ID
     else:
         text = ''
