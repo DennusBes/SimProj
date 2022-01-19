@@ -1,3 +1,4 @@
+from CarQueue import CarQueue
 class Lane:
 
     def __init__(self, ID, color,kind, connections, intersection):
@@ -8,6 +9,7 @@ class Lane:
         self.kind = kind
         self.shape = 'rect'
         self.layer = 0
+        self.car_lists = [CarQueue(i) for i in range(2)]
 
 
 

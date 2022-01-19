@@ -1,9 +1,11 @@
+import random
+
 from mesa import Model
 from mesa.space import MultiGrid
 from mesa.time import BaseScheduler
 
-from Vehicle import Vehicle
 from FillerRoad import FillerRoad
+from Vehicle import Vehicle
 
 
 class RoadModel(Model):
@@ -50,6 +52,17 @@ class RoadModel(Model):
                                 x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
                                 y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
 
+                            if (j == 0 or j == 2) and lk == 'ingress':
+
+                                if j == 0:
+                                    ind = 0
+                                if j == 2:
+                                    ind = 1
+
+                                self.grid.place_agent(lane.car_lists[ind], (
+                                    x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
+                                    y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
+
     def create_filler_roads(self):
 
         """ place FillerRoad agents between the lanes
@@ -71,11 +84,20 @@ class RoadModel(Model):
     def create_vehicle(self):
         for i in range(2):
             vehicle = Vehicle(i, self)
-            self.grid.place_agent(vehicle,(1,48-i))
+            self.grid.place_agent(vehicle, (1, 48 - i))
             # print(self.grid.get_cell_list_contents((51,51)))
             self.schedule.add(vehicle)
 
     def step(self):
-        self.schedule.step()		
-
-
+        self.schedule.step()
+        groups = self.intersection.ingress_groups
+        for group in groups:
+            if group is not None:
+                lanes = group.lanes
+                for lane in lanes:
+                    rand = random.randint(0, 10)
+                    if rand == 5 or rand == 3 or rand == 1:
+                        lane.car_lists[0].add_car(Vehicle(1, self))
+                    elif rand == 2:
+                        if len(lane.car_lists[0].cars) > 0:
+                            lane.car_lists[0].remove_car()
