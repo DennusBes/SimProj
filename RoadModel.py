@@ -1,7 +1,8 @@
 from mesa import Model
 from mesa.space import MultiGrid
+from mesa.time import BaseScheduler
 
-from Car import Car
+from Vehicle import Vehicle
 from FillerRoad import FillerRoad
 
 
@@ -12,6 +13,8 @@ class RoadModel(Model):
         super().__init__()
         self.length = length
         self.intersection = intersection
+
+        self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(self.intersection.dimensions[0], self.intersection.dimensions[1], torus=False)
         self.create_roads()
         self.create_filler_roads()
@@ -65,12 +68,14 @@ class RoadModel(Model):
             for j in lst:
                 self.grid.place_agent(FillerRoad(i + j), (i, j))
 
-
-
     def create_vehicle(self):
+        for i in range(2):
+            vehicle = Vehicle(i, self)
+            self.grid.place_agent(vehicle,(1,48-i))
+            # print(self.grid.get_cell_list_contents((51,51)))
+            self.schedule.add(vehicle)
 
-        self.grid.place_agent(Car(),(51,51))
-        print(self.grid.get_cell_list_contents((51,51)))
-
+    def step(self):
+        self.schedule.step()		
 
 
