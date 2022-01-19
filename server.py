@@ -4,6 +4,7 @@ from mesa.visualization.UserParam import UserSettableParameter
 from mesa.visualization.modules import CanvasGrid
 
 import Lane
+from CarQueue import CarQueue
 from Intersection import Intersection
 from RoadModel import RoadModel
 
@@ -17,7 +18,9 @@ def lane_draw(agent):
     """
 
     if isinstance(agent, Lane.Lane):
-        text = agent.ID
+        text = ''
+    elif isinstance(agent, CarQueue):
+        text = len(agent.cars)
     else:
         text = ''
 
