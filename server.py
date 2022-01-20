@@ -24,22 +24,20 @@ def lane_draw(agent):
     elif isinstance(agent, CarQueue):
         text = len(agent.cars)
 
-    elif isinstance(agent, TrafficLight ):
-        text = 3
-        return {"Shape": agent.shape, 'r': 1, "Filled": "true", "Layer": 2, "Color": agent.color,
+    elif isinstance(agent, TrafficLight):
+
+        return {"Shape": agent.shape, 'r': 1, "Filled": "true", "Layer": 2, "Color": agent.state,
                 'text': agent.ID, 'text_color': 'white'}
     else:
         text = ''
 
-
-
     if agent.shape == 'rect':
 
-        return {"Shape": agent.shape, "w": 0.9, 'h':0.9, "Filled": "true", "Layer": 0, "Color": agent.color,
-            'text': text, 'text_color': 'white'}
+        return {"Shape": agent.shape, "w": 0.9, 'h': 0.9, "Filled": "true", "Layer": 0, "Color": agent.color,
+                'text': text, 'text_color': 'white'}
     else:
 
-        return {"Shape": agent.shape,'r': 1, "Filled": "true", "Layer": 1, "Color": agent.color,
+        return {"Shape": agent.shape, 'r': 1, "Filled": "true", "Layer": 1, "Color": agent.color,
                 'text': text, 'text_color': 'white'}
 
 
@@ -58,15 +56,14 @@ def xml_to_dict(filename):
     return xmldict
 
 
-
 xmldict = xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml')
 
-activation_df = pd.read_csv('BOS211.csv', sep =';', low_memory = False)
+activation_df = pd.read_csv('BOS211.csv', sep=';', low_memory=False)
 
 dimensions = (101, 101)
 
 # {'1': '3', '3': '1', '2':'4'}
-intersection = Intersection(xmldict,activation_df, dimensions, {'1':'2', '2':'3', '3':'4'})
+intersection = Intersection(xmldict, activation_df, dimensions, {'1': '2', '2': '3', '3': '4'})
 
 dim = intersection.dimensions
 

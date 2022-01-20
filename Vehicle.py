@@ -1,5 +1,5 @@
 from mesa import Agent
-from Lane import Lane
+
 from FillerRoad import FillerRoad
 
 
@@ -37,7 +37,6 @@ class Vehicle(Agent):
 			this_cell = self.model.grid.get_cell_list_contents([(x_pos, y_pos)])
 
 			for obj in this_cell:
-				print("object: ",obj)
 				if isinstance(obj, Vehicle):
 					print("Next cell already contains a vehicle")
 					return False

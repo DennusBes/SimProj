@@ -15,7 +15,8 @@ class RoadModel(Model):
         super().__init__()
         self.length = length
         self.intersection = intersection
-
+        self.step_at_change = 0
+        self.active_combo = [3,4]
         self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(self.intersection.dimensions[0], self.intersection.dimensions[1], torus=False)
         self.create_roads()
@@ -99,15 +100,56 @@ class RoadModel(Model):
             self.schedule.add(vehicle)
 
     def step(self):
+
+        green_timing = 20
+
+
         self.schedule.step()
+        current_step = self.schedule.steps
         groups = self.intersection.ingress_groups
+        traffic_light_combos = self.intersection.traffic_light_combos
+
+
+        if self.step_at_change + green_timing == current_step:
+            traffic_rand = random.randint(0, len(traffic_light_combos) - 1)
+            self.active_combo = traffic_light_combos[traffic_rand]
+            self.step_at_change = current_step
+
+
+        print(self.get_traffic_prio(groups))
+
+
         for group in groups:
             if group is not None:
                 lanes = group.lanes
                 for lane in lanes:
+
+
+                    if lane.signal_group.ID not in self.active_combo:
+                        lane.signal_group.change_state('red')
+                    else:
+                        lane.signal_group.change_state('green')
                     rand = random.randint(0, 10)
                     if rand == 5 or rand == 3 or rand == 1:
                         lane.car_lists[0].add_car(Vehicle(1, self))
-                    elif rand == 2:
+                    elif lane.signal_group.state == 'green':
                         if len(lane.car_lists[0].cars) > 0:
                             lane.car_lists[0].remove_car()
+
+
+
+
+    def get_traffic_prio(self, groups):
+
+        prio_dict = {}
+        for group in groups:
+            if group is not None:
+                lanes = group.lanes
+                for lane in lanes:
+                    try:
+                        prio_dict[lane.signal_group.ID] += len(lane.car_lists[0].cars)
+                    except KeyError:
+                        prio_dict[lane.signal_group.ID] = len(lane.car_lists[0].cars)
+
+        print(self.intersection.traffic_light_combos)
+        return prio_dict
