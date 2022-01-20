@@ -17,4 +17,4 @@ def get_traffic_combos(df, frac):
     return combos
 
 
-print(get_traffic_combos(pd.read_csv('BOS210.csv', sep=';', low_memory=False), 0.2))
+print(get_traffic_combos(pd.read_csv('BOS210.csv', sep=';', low_memory=False), 1))

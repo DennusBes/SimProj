@@ -27,7 +27,6 @@ class Lane:
             if self.ID == x['laneID']:
 
                 try:
-                    print(x['laneID'], x['connectsTo']['connection'])
                     self.signal_group = TrafficLight(sig_dict[int(x['connectsTo']['connection']['signalGroup'])], self)
                 except KeyError:
                     pass

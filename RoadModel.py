@@ -93,7 +93,6 @@ class RoadModel(Model):
         for i in range(2):
             vehicle = Vehicle(i, self)
             self.grid.place_agent(vehicle, (1, 48 - i))
-            # print(self.grid.get_cell_list_contents((51,51)))
             self.schedule.add(vehicle)
 
     def step(self):

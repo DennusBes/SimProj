@@ -56,9 +56,9 @@ class Vehicle(Agent):
 		:param lane: Lane to check.
 		:returns: Best car x position. If car is in front of him it will return current x position.
 		"""
-		print("Current position: ", self.pos[0])
-		print("Current speed: ", self.speed)
-		print("Next position: ",self.pos[0] + self.speed)
+		#print("Current position: ", self.pos[0])
+		#print("Current speed: ", self.speed)
+		#print("Next position: ",self.pos[0] + self.speed)
 		for i in range((self.pos[0] + 1), (self.pos[0] + self.speed + 1)):
 			if not self.check_cell(i,self.pos[1]):
 				return i - 1
