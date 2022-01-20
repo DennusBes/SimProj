@@ -7,11 +7,10 @@ from IngressLaneGroup import IngressLaneGroup
 
 class Intersection:
 
-    def __init__(self, xml_dict, activation_df, dimensions, flip, trafic_light_combos, manipulation=None):
+    def __init__(self, xml_dict, dimensions, flip, trafic_light_combos, manipulation=None):
 
         self.flip = flip
         self.xml_dict = xml_dict
-        self.activation_df = activation_df
         self.center = (dimensions[0] / 2, dimensions[1] / 2)
         self.dimensions = dimensions
         self.lane_df = None

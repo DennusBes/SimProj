@@ -59,8 +59,7 @@ def xml_to_dict(filename):
 dimensions = (101, 101)
 
 # {'1': '3', '3': '1', '2':'4'}
-intersection = Intersection(xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml'),
-                            pd.read_csv('BOS211.csv', sep=';', low_memory=False), dimensions, False,
+intersection = Intersection(xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml'), dimensions, False,
                             [[6, 7, 9], [9, 10], [5, 6, 11, 26, 36], [6, 11, 26, 37], [6, 7], [5, 11, 26, 36],
                              [5, 11, 26, 36, 37], [5, 6, 11, 26, 36, 37], [6, 9], [5, 6, 26], [11, 26, 37],
                              [10, 24, 35], [5, 6], [6, 11, 26, 36], [24, 35, 38], [7, 9], [5, 11, 26, 37],
@@ -87,7 +86,7 @@ intersection = Intersection(xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml'),
                             {'1': '2', '2': '3', '3': '4'})
 
 intersection2 = Intersection(xml_to_dict('79190154_BOS210_ITF_COMPLETE.xml'),
-                             pd.read_csv('BOS210.csv', sep=';', low_memory=False), dimensions, True,
+                             dimensions, True,
                              [[12, 22, 24, 32, 37], [3, 24], [4, 5, 12], [4, 5], [1, 3], [5, 11], [4, 12, 31], [3, 4],
                               [3, 4, 5], [1, 3, 24], [11, 38], [12, 24], [3, 5], [12, 22], [4, 5, 12, 31], [4, 5, 38],
                               [4, 12], [3, 38], [5, 11, 38], [12, 31], [12, 22, 31, 32], [5, 12], [1, 3, 22], [24, 37],
