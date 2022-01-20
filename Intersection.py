@@ -7,8 +7,9 @@ from IngressLaneGroup import IngressLaneGroup
 
 class Intersection:
 
-    def __init__(self, xml_dict, activation_df, dimensions, manipulation=None):
+    def __init__(self, xml_dict, activation_df, dimensions, flip, trafic_light_combos, manipulation=None):
 
+        self.flip = flip
         self.xml_dict = xml_dict
         self.activation_df = activation_df
         self.center = (dimensions[0] / 2, dimensions[1] / 2)
@@ -28,32 +29,7 @@ class Intersection:
         self.sep = 1
         self.ingress_groups = self.set_lane_groups('ingress')
         self.egress_groups = self.set_lane_groups('egress')
-        self.traffic_light_combos = [[5, 26], [5, 6, 11], [11, 26, 36, 37], [6, 9], [10, 24], [6, 7, 9], [9, 10],
-                                     [5, 11], [5, 6, 11, 26, 36, 37], [6, 7], [5, 11, 26, 37], [5, 6], [5, 11, 26],
-                                     [6, 11, 26, 36], [5, 11, 26, 36], [6, 11, 26], [5, 6, 11, 26], [11, 36], [6, 26],
-                                     [5, 6, 11, 26, 36], [6, 11, 26, 36, 37], [5, 11, 26, 36, 37], [6, 11, 26, 37],
-                                     [5, 6, 26], [10, 24, 28, 35], [24, 28, 38], [7, 9], [11, 24, 26, 36, 37], [24, 26],
-                                     [24, 26, 35], [11, 24, 26, 37], [24, 35, 38], [10, 24, 28, 35, 38], [11, 26, 36],
-                                     [6, 11], [5, 6, 11, 26, 37], [11, 26], [24, 35], [10, 24, 35],
-                                     [11, 24, 26, 28, 35, 36, 38], [10, 24, 28], [10, 24, 28, 38], [5, 6, 11, 36],
-                                     [11, 26, 37], [5, 28], [9, 28, 38], [24, 26, 28, 38], [10, 24, 35, 38], [24, 28],
-                                     [11, 24, 26], [9, 10, 28], [24, 28, 35, 38], [11, 24, 26, 28, 35, 38], [11, 24],
-                                     [11, 24, 26, 35, 36], [11, 24, 26, 35, 36, 37], [9, 10, 28, 38], [6, 26, 37],
-                                     [5, 26, 37], [24, 28, 35], [5, 11, 26, 28], [11, 24, 36], [5, 11, 28, 38],
-                                     [28, 38], [11, 24, 26, 36], [11, 24, 26, 28, 35, 37, 38], [11, 24, 26, 35, 37, 38],
-                                     [11, 24, 26, 28, 36, 38], [11, 24, 26, 28, 35, 36, 37, 38], [11, 24, 26, 35],
-                                     [5, 6, 26, 37], [5, 11, 36], [11, 24, 26, 28, 37, 38], [11, 24, 28, 35, 38],
-                                     [11, 26, 28, 37], [11, 24, 26, 28, 36, 37, 38], [11, 24, 35], [11, 24, 26, 35, 37],
-                                     [10, 28, 38], [5, 11, 26, 28, 36, 37], [9, 28], [24, 26, 28, 35], [24, 26, 35, 38],
-                                     [11, 24, 26, 35, 38], [26, 37], [11, 24, 26, 28, 38], [11, 26, 28, 37, 38],
-                                     [11, 24, 26, 35, 36, 37, 38], [11, 24, 28, 38], [11, 24, 35, 38], [26, 28],
-                                     [5, 28, 38], [5, 11, 26, 28, 37], [11, 24, 26, 28, 36, 37], [24, 26, 28, 35, 38],
-                                     [26, 28, 38], [5, 26, 28], [7, 9, 28], [11, 26, 28, 36], [5, 11, 28],
-                                     [11, 24, 26, 28, 35, 36], [11, 24, 28], [5, 11, 26, 28, 36, 37, 38], [11, 28, 38],
-                                     [11, 26, 28, 36, 37], [5, 11, 26, 28, 36], [7, 28], [5, 11, 28, 36], [6, 11, 36],
-                                     [10, 28], [24, 26, 37], [5, 26, 28, 38], [11, 24, 26, 28, 35, 36, 37],
-                                     [24, 26, 28], [11, 26, 28, 36, 38], [5, 11, 26, 28, 37, 38]]
-        # self.get_traffic_combos()
+        self.traffic_light_combos = trafic_light_combos
 
     def manipulate_intersection(self, change):
         """ change the position on lanegroups on the intersection
@@ -122,18 +98,3 @@ class Intersection:
         check_list = eval(f'self.req_{kind}_groups')
         return [lane_group(i, 46, self.lane_df,
                            loc_dict[i], kind, self) if i in check_list else None for i in list(range(1, 5))]
-
-    def get_traffic_combos(self):
-
-        df = self.activation_df
-        df = df.sample(frac=0.5)
-
-        combos = []
-        for index, row in df.iterrows():
-            r = list(row[df.columns])
-            if (r.count('#') > 1):
-                combo = [int(ind) for ind in row.index if row[ind] == '#']
-                if combo not in combos:
-                    combos.append(combo)
-        print(combos)
-        self.traffic_light_combos = combos

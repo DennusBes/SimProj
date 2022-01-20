@@ -17,13 +17,15 @@ class LaneGroup:
         self.width = len(self.lanes)
         self.order_lanes()
 
-    def order_lanes(self, flip=False):
+    def order_lanes(self):
         """ changes the order of the lanes based on 'maneuvers' in the XML file
 
         Args:
             flip: reverses the ingress lane list
 
         """
+
+        flip = self.intersection.flip
 
         left = []
         right = []

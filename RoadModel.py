@@ -1,5 +1,6 @@
 import random
 
+import numpy as np
 from mesa import Model
 from mesa.space import MultiGrid
 from mesa.time import BaseScheduler
@@ -16,7 +17,7 @@ class RoadModel(Model):
         self.length = length
         self.intersection = intersection
         self.step_at_change = 0
-        self.active_combo = [3,4]
+        self.active_combo = [3, 4]
         self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(self.intersection.dimensions[0], self.intersection.dimensions[1], torus=False)
         self.create_roads()
@@ -53,8 +54,6 @@ class RoadModel(Model):
                                 x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
                                 y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
 
-
-
                             # placing the carqueue objects
                             if (j == 1 or j == 3) and lk == 'ingress':
 
@@ -68,11 +67,9 @@ class RoadModel(Model):
                                     y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
 
                             if j == 0 and lk == 'ingress':
-
                                 self.grid.place_agent(lane.signal_group, (
                                     x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
                                     y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
-
 
     def create_filler_roads(self):
 
@@ -103,27 +100,20 @@ class RoadModel(Model):
 
         green_timing = 20
 
-
         self.schedule.step()
         current_step = self.schedule.steps
         groups = self.intersection.ingress_groups
         traffic_light_combos = self.intersection.traffic_light_combos
 
-
         if self.step_at_change + green_timing == current_step:
-            traffic_rand = random.randint(0, len(traffic_light_combos) - 1)
-            self.active_combo = traffic_light_combos[traffic_rand]
+            self.active_combo = self.get_traffic_prio(groups)
             self.step_at_change = current_step
-
-
-        print(self.get_traffic_prio(groups))
 
 
         for group in groups:
             if group is not None:
                 lanes = group.lanes
                 for lane in lanes:
-
 
                     if lane.signal_group.ID not in self.active_combo:
                         lane.signal_group.change_state('red')
@@ -135,9 +125,6 @@ class RoadModel(Model):
                     elif lane.signal_group.state == 'green':
                         if len(lane.car_lists[0].cars) > 0:
                             lane.car_lists[0].remove_car()
-
-
-
 
     def get_traffic_prio(self, groups):
 
@@ -151,5 +138,6 @@ class RoadModel(Model):
                     except KeyError:
                         prio_dict[lane.signal_group.ID] = len(lane.car_lists[0].cars)
 
-        print(self.intersection.traffic_light_combos)
-        return prio_dict
+        combos = self.intersection.traffic_light_combos
+
+        return combos[np.argmax([sum([prio_dict[x] if x in list(prio_dict.keys()) else 0 for x in i]) for i in combos])]
