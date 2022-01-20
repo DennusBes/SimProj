@@ -111,8 +111,9 @@ dim = intersection.dimensions
 canvas_element = CanvasGrid(lane_draw, dim[0], dim[1], (dim[0] * 10), (dim[1] * 10))
 
 model_params = {
-    "length": UserSettableParameter("number", "Road length", 10),
-    "intersection": intersection
+    "intersection": intersection,
+    'green_length' : UserSettableParameter("number", "Green Light Duration", 15),
+    'orange_length': UserSettableParameter("number", "Orange Light Duration", 5)
 }
 
 server = ModularServer(

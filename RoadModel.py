@@ -11,13 +11,14 @@ from Vehicle import Vehicle
 
 class RoadModel(Model):
 
-    def __init__(self, length, intersection):
+    def __init__(self, intersection, green_length, orange_length):
 
         super().__init__()
-        self.length = length
+        self.green_length = green_length
+        self.orange_length = orange_length
         self.intersection = intersection
         self.step_at_change = 0
-        self.active_combo = [3, 4]
+        self.current_green = self.get_traffic_prio(self.intersection.ingress_groups)
         self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(self.intersection.dimensions[0], self.intersection.dimensions[1], torus=False)
         self.create_roads()
@@ -97,27 +98,29 @@ class RoadModel(Model):
 
     def step(self):
 
-        green_timing = 20
 
         self.schedule.step()
         current_step = self.schedule.steps
         groups = self.intersection.ingress_groups
         traffic_light_combos = self.intersection.traffic_light_combos
 
-        if self.step_at_change + green_timing == current_step:
-            self.active_combo = self.get_traffic_prio(groups)
-            self.step_at_change = current_step
-
-
         for group in groups:
             if group is not None:
                 lanes = group.lanes
                 for lane in lanes:
 
-                    if lane.signal_group.ID not in self.active_combo:
+                    if lane.signal_group.ID not in self.current_green:
                         lane.signal_group.change_state('red')
-                    else:
+                    if (lane.signal_group.state == 'red' or lane.signal_group.state == 'orange') and lane.signal_group.ID in self.current_green and self.step_at_change + self.green_length > current_step:
                         lane.signal_group.change_state('green')
+                        self.step_at_change = current_step
+                    if self.step_at_change + self.green_length == current_step and lane.signal_group.state == 'green':
+                        lane.signal_group.change_state('orange')
+                    if self.step_at_change + self.green_length + self.orange_length == current_step and lane.signal_group.state == 'orange':
+                        lane.signal_group.change_state('red')
+                        self.current_green = self.get_traffic_prio(groups)
+                        self.step_at_change = current_step + 1
+
                     rand = random.randint(0, 10)
                     if rand == 5 or rand == 3 or rand == 1:
                         lane.car_lists[0].add_car(Vehicle(1, self))
