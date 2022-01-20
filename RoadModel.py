@@ -52,16 +52,26 @@ class RoadModel(Model):
                                 x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
                                 y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
 
-                            if (j == 0 or j == 2) and lk == 'ingress':
 
-                                if j == 0:
+
+                            # placing the carqueue objects
+                            if (j == 1 or j == 3) and lk == 'ingress':
+
+                                if j == 1:
                                     ind = 0
-                                if j == 2:
+                                if j == 3:
                                     ind = 1
 
                                 self.grid.place_agent(lane.car_lists[ind], (
                                     x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
                                     y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
+
+                            if j == 0 and lk == 'ingress':
+
+                                self.grid.place_agent(lane.signal_group, (
+                                    x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
+                                    y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
+
 
     def create_filler_roads(self):
 

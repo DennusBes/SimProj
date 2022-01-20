@@ -1,3 +1,4 @@
+import pandas as pd
 import xmltodict
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
@@ -7,6 +8,7 @@ import Lane
 from CarQueue import CarQueue
 from Intersection import Intersection
 from RoadModel import RoadModel
+from TrafficLight import TrafficLight
 
 
 def lane_draw(agent):
@@ -21,8 +23,15 @@ def lane_draw(agent):
         text = ''
     elif isinstance(agent, CarQueue):
         text = len(agent.cars)
+
+    elif isinstance(agent, TrafficLight ):
+        text = 3
+        return {"Shape": agent.shape, 'r': 1, "Filled": "true", "Layer": 2, "Color": agent.color,
+                'text': agent.ID, 'text_color': 'white'}
     else:
         text = ''
+
+
 
     if agent.shape == 'rect':
 
@@ -50,12 +59,14 @@ def xml_to_dict(filename):
 
 
 
-xmldict = xml_to_dict('79190154_BOS210_ITF_COMPLETE.xml')
+xmldict = xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml')
+
+activation_df = pd.read_csv('BOS211.csv', sep =';', low_memory = False)
 
 dimensions = (101, 101)
 
 # {'1': '3', '3': '1', '2':'4'}
-intersection = Intersection(xmldict, dimensions, {'1':'2', '2':'3', '3':'4'})
+intersection = Intersection(xmldict,activation_df, dimensions, {'1':'2', '2':'3', '3':'4'})
 
 dim = intersection.dimensions
 

@@ -17,7 +17,7 @@ class LaneGroup:
         self.width = len(self.lanes)
         self.order_lanes()
 
-    def order_lanes(self, flip=True):
+    def order_lanes(self, flip=False):
         """ changes the order of the lanes based on 'maneuvers' in the XML file
 
         Args:
