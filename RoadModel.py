@@ -98,28 +98,16 @@ class RoadModel(Model):
 
     def step(self):
 
-
         self.schedule.step()
         current_step = self.schedule.steps
         groups = self.intersection.ingress_groups
-        traffic_light_combos = self.intersection.traffic_light_combos
 
         for group in groups:
             if group is not None:
                 lanes = group.lanes
                 for lane in lanes:
 
-                    if lane.signal_group.ID not in self.current_green:
-                        lane.signal_group.change_state('red')
-                    if (lane.signal_group.state == 'red' or lane.signal_group.state == 'orange') and lane.signal_group.ID in self.current_green and self.step_at_change + self.green_length > current_step:
-                        lane.signal_group.change_state('green')
-                        self.step_at_change = current_step
-                    if self.step_at_change + self.green_length == current_step and lane.signal_group.state == 'green':
-                        lane.signal_group.change_state('orange')
-                    if self.step_at_change + self.green_length + self.orange_length == current_step and lane.signal_group.state == 'orange':
-                        lane.signal_group.change_state('red')
-                        self.current_green = self.get_traffic_prio(groups)
-                        self.step_at_change = current_step + 1
+                    self.traffic_light_control(lane, current_step, groups)
 
                     rand = random.randint(0, 10)
                     if rand == 5 or rand == 3 or rand == 1:
@@ -143,3 +131,18 @@ class RoadModel(Model):
         combos = self.intersection.traffic_light_combos
 
         return combos[np.argmax([sum([prio_dict[x] if x in list(prio_dict.keys()) else 0 for x in i]) for i in combos])]
+
+    def traffic_light_control(self, lane, current_step, groups):
+
+        if lane.signal_group.ID not in self.current_green:
+            lane.signal_group.change_state('red')
+        if (
+                lane.signal_group.state == 'red' or lane.signal_group.state == 'orange') and lane.signal_group.ID in self.current_green and self.step_at_change + self.green_length > current_step:
+            lane.signal_group.change_state('green')
+            self.step_at_change = current_step
+        if self.step_at_change + self.green_length == current_step and lane.signal_group.state == 'green':
+            lane.signal_group.change_state('orange')
+        if self.step_at_change + self.green_length + self.orange_length == current_step and lane.signal_group.state == 'orange':
+            lane.signal_group.change_state('red')
+            self.current_green = self.get_traffic_prio(groups)
+            self.step_at_change = current_step + 1
