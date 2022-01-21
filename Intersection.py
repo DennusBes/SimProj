@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 import pandas as pd
 
@@ -7,14 +9,14 @@ from IngressLaneGroup import IngressLaneGroup
 
 class Intersection:
 
-    def __init__(self, xml_dict, dimensions, flip, trafic_light_combos, manipulation=None):
+    def __init__(self, xml_dict, dimensions, flip, trafic_light_combos):
 
         self.flip = flip
         self.xml_dict = xml_dict
         self.center = (dimensions[0] / 2, dimensions[1] / 2)
         self.dimensions = dimensions
         self.lane_df = None
-        self.manipulate_intersection(manipulation)
+        self.set_lane_df()
         self.req_ingress_groups = self.set_group_numbers('ingress')
         self.req_egress_groups = self.set_group_numbers('egress')
 
@@ -30,22 +32,6 @@ class Intersection:
         self.egress_groups = self.set_lane_groups('egress')
         self.traffic_light_combos = trafic_light_combos
 
-    def manipulate_intersection(self, change):
-        """ change the position on lanegroups on the intersection
-
-        Args:
-            change: a dictionary of what lanegroups should be swapped
-
-        """
-
-        self.lane_df = pd.DataFrame([x for x in
-                                     self.xml_dict['topology']['mapData']['intersections']['intersectionGeometry'][
-                                         'laneSet'][
-                                         'genericLane'] if
-                                     x['laneAttributes']['sharedWith'][3] == '1' and x['laneAttributes']['sharedWith'][
-                                         7] == '0'])
-        self.lane_df = self.lane_df.replace(
-            {'ingressApproach': change, 'egressApproach': change})
 
     def set_group_numbers(self, kind):
         """ returns a list with the numbers of the lanegroups that should be created for ingress/egress
@@ -100,3 +86,12 @@ class Intersection:
         groups = [lane_group(check_list[i - 1], 46, self.lane_df,
                              loc_dict[i], kind, self) if i <= len(check_list) else None for i in list(range(1, 5))]
         return groups
+
+    def set_lane_df(self):
+
+        self.lane_df = pd.DataFrame([x for x in
+                                     self.xml_dict['topology']['mapData']['intersections']['intersectionGeometry'][
+                                         'laneSet'][
+                                         'genericLane'] if
+                                     x['laneAttributes']['sharedWith'][3] == '1' and x['laneAttributes']['sharedWith'][
+                                         7] == '0'])
