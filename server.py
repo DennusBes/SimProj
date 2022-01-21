@@ -82,7 +82,7 @@ intersection = Intersection(xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml'), dim
                              [26, 28], [11, 24, 35, 38], [11, 24, 26, 28, 35, 36, 37], [7, 28],
                              [11, 24, 26, 28, 35, 36], [11, 28, 38], [5, 11, 28], [11, 26, 28, 37], [10, 28],
                              [11, 24, 26, 28, 36, 37], [5, 11, 26, 28, 36], [11, 24, 26, 28, 35],
-                             [5, 11, 26, 28, 37, 38], [5, 26, 28, 38]])
+                             [5, 11, 26, 28, 37, 38], [5, 26, 28, 38]], [[2, 3], [1, 2], [0, 1]])
 
 intersection2 = Intersection(xml_to_dict('79190154_BOS210_ITF_COMPLETE.xml'),
                              dimensions, True,
@@ -101,7 +101,7 @@ intersection2 = Intersection(xml_to_dict('79190154_BOS210_ITF_COMPLETE.xml'),
                               [11, 28], [1, 3, 22, 32], [3, 22, 32], [22, 24, 37], [12, 22, 24, 37], [3, 22, 24, 37],
                               [3, 5, 28], [12, 22, 24, 28], [3, 4, 28], [1, 22, 32], [3, 28], [3, 22, 24, 32, 37],
                               [12, 22, 24, 31, 32], [3, 24, 37], [22, 28], [1, 22, 24, 37],
-                              [12, 22, 24, 28, 31, 32, 37], [12, 22, 24, 28, 31, 32]])
+                              [12, 22, 24, 28, 31, 32, 37], [12, 22, 24, 28, 31, 32]], [[2, 3], [1, 2], [0, 1]])
 
 
 dim = intersection.dimensions
@@ -109,7 +109,7 @@ dim = intersection.dimensions
 canvas_element = CanvasGrid(lane_draw, dim[0], dim[1], (dim[0] * 10), (dim[1] * 10))
 
 model_params = {
-    "intersection": intersection,
+    "intersection": intersection2,
     'green_length' : UserSettableParameter("number", "Green Light Duration", 15),
     'orange_length': UserSettableParameter("number", "Orange Light Duration", 5)
 }

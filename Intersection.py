@@ -9,8 +9,9 @@ from IngressLaneGroup import IngressLaneGroup
 
 class Intersection:
 
-    def __init__(self, xml_dict, dimensions, flip, trafic_light_combos):
+    def __init__(self, xml_dict, dimensions, flip, trafic_light_combos, turn_instructions = []):
 
+        self.turn_instructions = turn_instructions
         self.flip = flip
         self.xml_dict = xml_dict
         self.center = (dimensions[0] / 2, dimensions[1] / 2)
@@ -31,7 +32,6 @@ class Intersection:
         self.ingress_groups = self.set_lane_groups('ingress')
         self.egress_groups = self.set_lane_groups('egress')
         self.traffic_light_combos = trafic_light_combos
-
 
     def set_group_numbers(self, kind):
         """ returns a list with the numbers of the lanegroups that should be created for ingress/egress
@@ -81,11 +81,30 @@ class Intersection:
                         3: [self.center[0] - mid_square, self.center[1] - mid_square - sep],
                         4: [self.center[0] - mid_square - sep, self.center[1] + mid_square]}
 
-        check_list = eval(f'self.req_{kind}_groups')
+        group_order = eval(f'self.req_{kind}_groups')
 
-        groups = [lane_group(check_list[i - 1], 46, self.lane_df,
-                             loc_dict[i], kind, self) if i <= len(check_list) else None for i in list(range(1, 5))]
+        group_order += [None] * (4 - len(group_order))
+
+        self.turn_intersection(group_order)
+
+        groups = [lane_group(group, 46, self.lane_df, loc_dict[i + 1], kind, self) if group is not None else None for
+                  i, group in
+                  enumerate(group_order)]
+
+        print(groups)
         return groups
+
+    def turn_intersection(self, lst):
+
+        def swap(i1, i2, lst):
+            lst[i1], lst[i2] = lst[i2], lst[i1]
+
+            return lst
+
+        for i in self.turn_instructions:
+            lst = swap(i[0], i[1], lst)
+
+        return lst
 
     def set_lane_df(self):
 
