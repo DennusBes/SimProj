@@ -41,8 +41,9 @@ class Intersection:
         self.lane_df = pd.DataFrame([x for x in
                                      self.xml_dict['topology']['mapData']['intersections']['intersectionGeometry'][
                                          'laneSet'][
-                                         'genericLane'] if x['laneAttributes']['sharedWith'][3] == '1'])
-
+                                         'genericLane'] if
+                                     x['laneAttributes']['sharedWith'][3] == '1' and x['laneAttributes']['sharedWith'][
+                                         7] == '0'])
         self.lane_df = self.lane_df.replace(
             {'ingressApproach': change, 'egressApproach': change})
 
@@ -95,5 +96,7 @@ class Intersection:
                         4: [self.center[0] - mid_square - sep, self.center[1] + mid_square]}
 
         check_list = eval(f'self.req_{kind}_groups')
-        return [lane_group(i, 46, self.lane_df,
-                           loc_dict[i], kind, self) if i in check_list else None for i in list(range(1, 5))]
+
+        groups = [lane_group(check_list[i - 1], 46, self.lane_df,
+                             loc_dict[i], kind, self) if i <= len(check_list) else None for i in list(range(1, 5))]
+        return groups

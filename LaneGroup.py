@@ -15,7 +15,16 @@ class LaneGroup:
         self.lanes = None
         self.get_lanes()
         self.width = len(self.lanes)
+
+        #22
+        #for i in (self.lanes):
+        #    print(i.connections)
+        #print()
+
+
+
         self.order_lanes()
+
 
     def order_lanes(self):
         """ changes the order of the lanes based on 'maneuvers' in the XML file
@@ -92,7 +101,8 @@ class LaneGroup:
                                           'maneuver': i['connectingLane']['maneuver']})
                     ingress_dict[int(x['laneID'])] = temp_list
                 except KeyError:
-                    continue
+                    pass
+                    #print(x['laneID'],x)
 
         egress_dict = {}
         for k, v in ingress_dict.items():
@@ -123,6 +133,7 @@ class LaneGroup:
         df = self.lane_df
 
         lane_numbers = list(df[['laneID']][df[f'{self.kind}Approach'].astype(str) == str(int(self.ID))]['laneID'])
+        lanes = [Lane(x, self.color, self.kind, self.get_lane_connections(int(x)), self.intersection) for x in
+                 lane_numbers]
 
-        self.lanes = [Lane(x, self.color, self.kind, self.get_lane_connections(int(x)), self.intersection) for x in
-                      lane_numbers]
+        self.lanes = lanes

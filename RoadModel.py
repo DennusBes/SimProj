@@ -32,6 +32,8 @@ class RoadModel(Model):
 
         for lk in ['ingress', 'egress']:
 
+            #print(self.intersection.ingress_groups)
+
             data = eval(f'self.intersection.{lk}_groups')
 
             dir_keys = {1: (0, +1), 2: (+1, 0), 3: (0, -1), 4: (-1, 0)}
@@ -41,6 +43,7 @@ class RoadModel(Model):
             egress_dir_keys = {1: (-1, 0), 2: (0, +1), 3: (+1, 0), 4: (0, -1)}
 
             for counter, lg in enumerate(data):
+
                 if lg is not None:
                     length = lg.length
                     lanes = lg.lanes
