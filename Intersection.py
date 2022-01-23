@@ -1,5 +1,3 @@
-import random
-
 import numpy as np
 import pandas as pd
 
@@ -87,7 +85,7 @@ class Intersection:
 
         self.turn_intersection(group_order)
 
-        groups = [lane_group(group, 46, self.lane_df, loc_dict[i + 1], kind, self) if group is not None else None for
+        groups = [lane_group(group, 46, self.lane_df, loc_dict[i + 1], kind, self, i) if group is not None else None for
                   i, group in
                   enumerate(group_order)]
 

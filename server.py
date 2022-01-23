@@ -1,4 +1,3 @@
-import pandas as pd
 import xmltodict
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
@@ -20,7 +19,7 @@ def lane_draw(agent):
     """
 
     if isinstance(agent, Lane.Lane):
-        text = ''
+        text = agent.ID
     elif isinstance(agent, CarQueue):
         text = len(agent.cars)
 

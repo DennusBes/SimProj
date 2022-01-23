@@ -4,7 +4,9 @@ from TrafficLight import TrafficLight
 
 class Lane:
 
-    def __init__(self, ID, color, kind, connections, intersection):
+    def __init__(self, ID, color, kind, connections, intersection, lat, lon):
+        self.lat = lat
+        self.lon = lon
         self.ID = ID
         self.color = color
         self.intersection = intersection
@@ -15,6 +17,7 @@ class Lane:
         self.car_lists = [CarQueue(i) for i in range(2)]
         self.signal_group = None
         self.get_signal_group()
+
 
     def get_signal_group(self):
         xml_dict = \
