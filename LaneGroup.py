@@ -22,7 +22,7 @@ class LaneGroup:
         """ changes the order of the lanes based on 'maneuvers' in the XML file
 
         Args:
-            flip: reverses the ingress lane list
+            flip: reverses the egress lane list
 
         """
 

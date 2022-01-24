@@ -55,7 +55,7 @@ def xml_to_dict(filename):
     return xmldict
 
 
-dimensions = (101, 101)
+dimensions = (51,51)
 
 # {'1': '3', '3': '1', '2':'4'}
 intersection = Intersection(xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml'), dimensions, False,
@@ -108,9 +108,10 @@ dim = intersection.dimensions
 canvas_element = CanvasGrid(lane_draw, dim[0], dim[1], (dim[0] * 10), (dim[1] * 10))
 
 model_params = {
-    "intersection": intersection2,
+    "intersection": intersection,
     'green_length' : UserSettableParameter("number", "Green Light Duration", 15),
-    'orange_length': UserSettableParameter("number", "Orange Light Duration", 5)
+    'orange_length': UserSettableParameter("number", "Orange Light Duration", 5,),
+    'traffic_light_priority' : UserSettableParameter('checkbox', 'traffic_light_priority', value=True)
 }
 
 server = ModularServer(

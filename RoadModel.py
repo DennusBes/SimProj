@@ -11,9 +11,10 @@ from Vehicle import Vehicle
 
 class RoadModel(Model):
 
-    def __init__(self, intersection, green_length, orange_length):
+    def __init__(self, intersection, green_length, orange_length, traffic_light_priority):
 
         super().__init__()
+        self.traffic_light_priority = traffic_light_priority
         self.green_length = green_length
         self.orange_length = orange_length
         self.intersection = intersection
@@ -32,7 +33,7 @@ class RoadModel(Model):
 
         for lk in ['ingress', 'egress']:
 
-            #print(self.intersection.ingress_groups)
+            # print(self.intersection.ingress_groups)
 
             data = eval(f'self.intersection.{lk}_groups')
 
@@ -94,9 +95,9 @@ class RoadModel(Model):
                 self.grid.place_agent(FillerRoad(i + j), (i, j))
 
     def create_vehicle(self):
-        for i in range(2):
+        for i in range(1):
             vehicle = Vehicle(i, self)
-            self.grid.place_agent(vehicle, (1, 48 - i))
+            self.grid.place_agent(vehicle, (12, 23 - i))
             self.schedule.add(vehicle)
 
     def step(self):
@@ -147,5 +148,13 @@ class RoadModel(Model):
             lane.signal_group.change_state('orange')
         if self.step_at_change + self.green_length + self.orange_length == current_step and lane.signal_group.state == 'orange':
             lane.signal_group.change_state('red')
-            self.current_green = self.get_traffic_prio(groups)
+            if self.traffic_light_priority:
+                self.current_green = self.get_traffic_prio(groups)
+            else:
+                try:
+                    self.current_green = self.intersection.traffic_light_combos[
+                        self.intersection.traffic_light_combos.index(self.current_green) + 1]
+                except IndexError:
+                    self.intersection.traffic_light_combos[0]
+
             self.step_at_change = current_step + 1
