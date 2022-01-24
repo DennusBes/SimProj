@@ -11,19 +11,20 @@ from Vehicle import Vehicle
 
 class RoadModel(Model):
 
-    def __init__(self, intersection, green_length, orange_length, traffic_light_priority):
+    def __init__(self, intersection, green_length, orange_length, traffic_light_priority, ci):
 
         super().__init__()
         self.traffic_light_priority = traffic_light_priority
+        self.ci = ci
         self.green_length = green_length
         self.orange_length = orange_length
         self.intersection = intersection
         self.step_at_change = 0
         self.current_green = self.get_traffic_prio(self.intersection.ingress_groups)
         self.schedule = BaseScheduler(self)
-        self.grid = MultiGrid(self.intersection.dimensions[0], self.intersection.dimensions[1], torus=False)
+        self.grid = MultiGrid(self.ci.dimensions[0], self.ci.dimensions[1], torus=False)
         self.create_roads()
-        self.create_filler_roads()
+        #self.create_filler_roads()
         self.create_vehicle()
 
     def create_roads(self):
@@ -31,50 +32,55 @@ class RoadModel(Model):
 
         """
 
-        for lk in ['ingress', 'egress']:
 
-            # print(self.intersection.ingress_groups)
 
-            data = eval(f'self.intersection.{lk}_groups')
+        for intersection in self.ci.intersections.reshape(1,9)[0]:
+            if intersection is not None:
 
-            dir_keys = {1: (0, +1), 2: (+1, 0), 3: (0, -1), 4: (-1, 0)}
+                for lk in ['ingress', 'egress']:
 
-            # These are the direcion keys that fill in the roads
-            ingress_dir_keys = {1: (+1, 0), 2: (0, -1), 3: (-1, 0), 4: (0, +1)}
-            egress_dir_keys = {1: (-1, 0), 2: (0, +1), 3: (+1, 0), 4: (0, -1)}
+                    # print(self.intersection.ingress_groups)
 
-            for counter, lg in enumerate(data):
+                    data = eval(f'intersection.{lk}_groups')
 
-                if lg is not None:
-                    length = lg.length
-                    lanes = lg.lanes
+                    dir_keys = {1: (0, +1), 2: (+1, 0), 3: (0, -1), 4: (-1, 0)}
 
-                    for j in range(length):
+                    # These are the direcion keys that fill in the roads
+                    ingress_dir_keys = {1: (+1, 0), 2: (0, -1), 3: (-1, 0), 4: (0, +1)}
+                    egress_dir_keys = {1: (-1, 0), 2: (0, +1), 3: (+1, 0), 4: (0, -1)}
 
-                        x_pos = (int(lg.lon) + dir_keys[counter + 1][0] * j)
-                        y_pos = (int(lg.lat) + dir_keys[counter + 1][1] * j)
+                    for counter, lg in enumerate(data):
 
-                        for i, lane in enumerate(lanes):
-                            self.grid.place_agent(lane, (
-                                x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
-                                y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
+                        if lg is not None:
+                            length = lg.length
+                            lanes = lg.lanes
 
-                            # placing the carqueue objects
-                            if (j == 1 or j == 3) and lk == 'ingress':
+                            for j in range(length):
 
-                                if j == 1:
-                                    ind = 0
-                                if j == 3:
-                                    ind = 1
+                                x_pos = (int(lg.lon) + dir_keys[counter + 1][0] * j)
+                                y_pos = (int(lg.lat) + dir_keys[counter + 1][1] * j)
 
-                                self.grid.place_agent(lane.car_lists[ind], (
-                                    x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
-                                    y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
+                                for i, lane in enumerate(lanes):
+                                    self.grid.place_agent(lane, (
+                                        x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
+                                        y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
 
-                            if j == 0 and lk == 'ingress':
-                                self.grid.place_agent(lane.signal_group, (
-                                    x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
-                                    y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
+                                    # placing the carqueue objects
+                                    if (j == 1 or j == 3) and lk == 'ingress':
+
+                                        if j == 1:
+                                            ind = 0
+                                        if j == 3:
+                                            ind = 1
+
+                                        self.grid.place_agent(lane.car_lists[ind], (
+                                            x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
+                                            y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
+
+                                    if j == 0 and lk == 'ingress':
+                                        self.grid.place_agent(lane.signal_group, (
+                                            x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
+                                            y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
 
     def create_filler_roads(self):
 

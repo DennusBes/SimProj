@@ -5,6 +5,7 @@ from mesa.visualization.modules import CanvasGrid
 
 import Lane
 from CarQueue import CarQueue
+from ConnectedIntersections import ConnectedIntersections
 from Intersection import Intersection
 from RoadModel import RoadModel
 from TrafficLight import TrafficLight
@@ -19,7 +20,7 @@ def lane_draw(agent):
     """
 
     if isinstance(agent, Lane.Lane):
-        text = agent.ID
+        text = ''
     elif isinstance(agent, CarQueue):
         text = len(agent.cars)
 
@@ -55,10 +56,10 @@ def xml_to_dict(filename):
     return xmldict
 
 
-dimensions = (51,51)
+dimensions = (99,99)
 
 # {'1': '3', '3': '1', '2':'4'}
-intersection = Intersection(xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml'), dimensions, False,
+intersection = Intersection(xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml'), False,
                             [[6, 7, 9], [9, 10], [5, 6, 11, 26, 36], [6, 11, 26, 37], [6, 7], [5, 11, 26, 36],
                              [5, 11, 26, 36, 37], [5, 6, 11, 26, 36, 37], [6, 9], [5, 6, 26], [11, 26, 37],
                              [10, 24, 35], [5, 6], [6, 11, 26, 36], [24, 35, 38], [7, 9], [5, 11, 26, 37],
@@ -83,8 +84,8 @@ intersection = Intersection(xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml'), dim
                              [11, 24, 26, 28, 36, 37], [5, 11, 26, 28, 36], [11, 24, 26, 28, 35],
                              [5, 11, 26, 28, 37, 38], [5, 26, 28, 38]], [[2, 3], [1, 2], [0, 1]])
 
-intersection2 = Intersection(xml_to_dict('79190154_BOS210_ITF_COMPLETE.xml'),
-                             dimensions, True,
+intersection2 = Intersection(xml_to_dict('79190154_BOS210_ITF_COMPLETE.xml')
+                             , True,
                              [[12, 22, 24, 32, 37], [3, 24], [4, 5, 12], [4, 5], [1, 3], [5, 11], [4, 12, 31], [3, 4],
                               [3, 4, 5], [1, 3, 24], [11, 38], [12, 24], [3, 5], [12, 22], [4, 5, 12, 31], [4, 5, 38],
                               [4, 12], [3, 38], [5, 11, 38], [12, 31], [12, 22, 31, 32], [5, 12], [1, 3, 22], [24, 37],
@@ -103,7 +104,9 @@ intersection2 = Intersection(xml_to_dict('79190154_BOS210_ITF_COMPLETE.xml'),
                               [12, 22, 24, 28, 31, 32, 37], [12, 22, 24, 28, 31, 32]], [[2, 3], [1, 2], [0, 1]])
 
 
-dim = intersection.dimensions
+ci = ConnectedIntersections([intersection,intersection2], dimensions)
+
+dim = dimensions
 
 canvas_element = CanvasGrid(lane_draw, dim[0], dim[1], (dim[0] * 10), (dim[1] * 10))
 
@@ -111,7 +114,8 @@ model_params = {
     "intersection": intersection,
     'green_length' : UserSettableParameter("number", "Green Light Duration", 15),
     'orange_length': UserSettableParameter("number", "Orange Light Duration", 5,),
-    'traffic_light_priority' : UserSettableParameter('checkbox', 'traffic_light_priority', value=True)
+    'traffic_light_priority' : UserSettableParameter('checkbox', 'traffic_light_priority', value=True),
+    'ci':ci
 }
 
 server = ModularServer(

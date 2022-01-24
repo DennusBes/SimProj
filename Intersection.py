@@ -7,29 +7,19 @@ from IngressLaneGroup import IngressLaneGroup
 
 class Intersection:
 
-    def __init__(self, xml_dict, dimensions, flip, trafic_light_combos, turn_instructions = []):
+    def __init__(self, xml_dict, flip, trafic_light_combos, turn_instructions = []):
 
         self.turn_instructions = turn_instructions
         self.flip = flip
         self.xml_dict = xml_dict
-        self.center = (dimensions[0] / 2, dimensions[1] / 2)
-        self.dimensions = dimensions
-        self.lane_df = None
-        self.set_lane_df()
-        self.req_ingress_groups = self.set_group_numbers('ingress')
-        self.req_egress_groups = self.set_group_numbers('egress')
-
-        # calculate the max amount of lanes next to each other for this intersection
-        lanes_per_group = [
-            [len(list(self.lane_df[['laneID']][self.lane_df[f'{kind}Approach'].astype(str) == str(int(i))]['laneID']))
-             for i in range(1, 5)] for kind in ['ingress', 'egress']]
-        self.max_group_width = max([lanes_per_group[0][i] + lanes_per_group[1][i] for i in range(4)])
-
-        self.mid_square = self.max_group_width - 2
-        self.sep = 1
-        self.ingress_groups = self.set_lane_groups('ingress')
-        self.egress_groups = self.set_lane_groups('egress')
+        self.lat = self.xml_dict['topology']['mapData']['intersections']['intersectionGeometry']['refPoint']['lat']
+        self.lon = self.xml_dict['topology']['mapData']['intersections']['intersectionGeometry']['refPoint']['long']
         self.traffic_light_combos = trafic_light_combos
+
+        self.center = None
+        self.lane_df = None
+        #self.intersection_fill()
+
 
     def set_group_numbers(self, kind):
         """ returns a list with the numbers of the lanegroups that should be created for ingress/egress
@@ -89,7 +79,6 @@ class Intersection:
                   i, group in
                   enumerate(group_order)]
 
-        print(groups)
         return groups
 
     def turn_intersection(self, lst):
@@ -112,3 +101,21 @@ class Intersection:
                                          'genericLane'] if
                                      x['laneAttributes']['sharedWith'][3] == '1' and x['laneAttributes']['sharedWith'][
                                          7] == '0'])
+
+    def fill_intersection(self):
+
+        self.lane_df = None
+        self.set_lane_df()
+        self.req_ingress_groups = self.set_group_numbers('ingress')
+        self.req_egress_groups = self.set_group_numbers('egress')
+
+        # calculate the max amount of lanes next to each other for this intersection
+        lanes_per_group = [
+            [len(list(self.lane_df[['laneID']][self.lane_df[f'{kind}Approach'].astype(str) == str(int(i))]['laneID']))
+             for i in range(1, 5)] for kind in ['ingress', 'egress']]
+        self.max_group_width = max([lanes_per_group[0][i] + lanes_per_group[1][i] for i in range(4)])
+
+        self.mid_square = self.max_group_width - 2
+        self.sep = 1
+        self.ingress_groups = self.set_lane_groups('ingress')
+        self.egress_groups = self.set_lane_groups('egress')
