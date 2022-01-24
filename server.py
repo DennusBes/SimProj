@@ -56,7 +56,7 @@ def xml_to_dict(filename):
     return xmldict
 
 
-dimensions = (99,99)
+dimensions = (90,90)
 
 # {'1': '3', '3': '1', '2':'4'}
 intersection = Intersection(xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml'), False,

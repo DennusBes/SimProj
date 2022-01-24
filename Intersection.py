@@ -15,10 +15,15 @@ class Intersection:
         self.lat = self.xml_dict['topology']['mapData']['intersections']['intersectionGeometry']['refPoint']['lat']
         self.lon = self.xml_dict['topology']['mapData']['intersections']['intersectionGeometry']['refPoint']['long']
         self.traffic_light_combos = trafic_light_combos
-
+        self.step_at_change = 0
+        self.current_green = trafic_light_combos[0]
         self.center = None
         self.lane_df = None
-        #self.intersection_fill()
+        self.max_group_width = None
+        self.mid_square = None
+        self.sep = None
+        self.ingress_groups = None
+        self.egress_groups = None
 
 
     def set_group_numbers(self, kind):

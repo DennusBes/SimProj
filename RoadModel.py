@@ -19,12 +19,10 @@ class RoadModel(Model):
         self.green_length = green_length
         self.orange_length = orange_length
         self.intersection = intersection
-        self.step_at_change = 0
-        self.current_green = self.get_traffic_prio(self.intersection.ingress_groups)
         self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(self.ci.dimensions[0], self.ci.dimensions[1], torus=False)
         self.create_roads()
-        #self.create_filler_roads()
+        # self.create_filler_roads()
         self.create_vehicle()
 
     def create_roads(self):
@@ -32,9 +30,7 @@ class RoadModel(Model):
 
         """
 
-
-
-        for intersection in self.ci.intersections.reshape(1,9)[0]:
+        for intersection in self.ci.intersections.reshape(1, 9)[0]:
             if intersection is not None:
 
                 for lk in ['ingress', 'egress']:
@@ -110,23 +106,28 @@ class RoadModel(Model):
 
         self.schedule.step()
         current_step = self.schedule.steps
-        groups = self.intersection.ingress_groups
 
-        for group in groups:
-            if group is not None:
-                lanes = group.lanes
-                for lane in lanes:
+        for intersection in self.ci.intersections.reshape(1, 9)[0]:
+            if intersection is not None:
 
-                    self.traffic_light_control(lane, current_step, groups)
 
-                    rand = random.randint(0, 10)
-                    if rand == 5 or rand == 3 or rand == 1:
-                        lane.car_lists[0].add_car(Vehicle(1, self))
-                    elif lane.signal_group.state == 'green':
-                        if len(lane.car_lists[0].cars) > 0:
-                            lane.car_lists[0].remove_car()
+                groups = intersection.ingress_groups
 
-    def get_traffic_prio(self, groups):
+                for group in groups:
+                    if group is not None:
+                        lanes = group.lanes
+                        for lane in lanes:
+
+                            self.traffic_light_control(lane, current_step, groups, intersection)
+
+                            rand = random.randint(0, 10)
+                            if rand == 5 or rand == 3 or rand == 1:
+                                lane.car_lists[0].add_car(Vehicle(1, self))
+                            elif lane.signal_group.state == 'green':
+                                if len(lane.car_lists[0].cars) > 0:
+                                    lane.car_lists[0].remove_car()
+
+    def get_traffic_prio(self, groups, intersection):
 
         prio_dict = {}
         for group in groups:
@@ -138,29 +139,29 @@ class RoadModel(Model):
                     except KeyError:
                         prio_dict[lane.signal_group.ID] = len(lane.car_lists[0].cars)
 
-        combos = self.intersection.traffic_light_combos
+        combos = intersection.traffic_light_combos
 
         return combos[np.argmax([sum([prio_dict[x] if x in list(prio_dict.keys()) else 0 for x in i]) for i in combos])]
 
-    def traffic_light_control(self, lane, current_step, groups):
+    def traffic_light_control(self, lane, current_step, groups, intersection):
 
-        if lane.signal_group.ID not in self.current_green:
+        if lane.signal_group.ID not in intersection.current_green:
             lane.signal_group.change_state('red')
         if (
-                lane.signal_group.state == 'red' or lane.signal_group.state == 'orange') and lane.signal_group.ID in self.current_green and self.step_at_change + self.green_length > current_step:
+                lane.signal_group.state == 'red' or lane.signal_group.state == 'orange') and lane.signal_group.ID in intersection.current_green and intersection.step_at_change + self.green_length > current_step:
             lane.signal_group.change_state('green')
-            self.step_at_change = current_step
-        if self.step_at_change + self.green_length == current_step and lane.signal_group.state == 'green':
+            intersection.step_at_change = current_step
+        if intersection.step_at_change + self.green_length == current_step and lane.signal_group.state == 'green':
             lane.signal_group.change_state('orange')
-        if self.step_at_change + self.green_length + self.orange_length == current_step and lane.signal_group.state == 'orange':
+        if intersection.step_at_change + self.green_length + self.orange_length == current_step and lane.signal_group.state == 'orange':
             lane.signal_group.change_state('red')
             if self.traffic_light_priority:
-                self.current_green = self.get_traffic_prio(groups)
+                intersection.current_green = self.get_traffic_prio(groups, intersection)
             else:
                 try:
-                    self.current_green = self.intersection.traffic_light_combos[
-                        self.intersection.traffic_light_combos.index(self.current_green) + 1]
+                    intersection.current_green = intersection.traffic_light_combos[
+                        intersection.traffic_light_combos.index(intersection.current_green) + 1]
                 except IndexError:
-                    self.intersection.traffic_light_combos[0]
+                    intersection.traffic_light_combos[0]
 
-            self.step_at_change = current_step + 1
+            intersection.step_at_change = current_step + 1
