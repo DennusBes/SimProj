@@ -56,7 +56,7 @@ def xml_to_dict(filename):
     return xmldict
 
 
-dimensions = (90,90)
+dimensions = (90, 90)
 
 # {'1': '3', '3': '1', '2':'4'}
 intersection = Intersection(xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml'), False,
@@ -84,8 +84,7 @@ intersection = Intersection(xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml'), Fal
                              [11, 24, 26, 28, 36, 37], [5, 11, 26, 28, 36], [11, 24, 26, 28, 35],
                              [5, 11, 26, 28, 37, 38], [5, 26, 28, 38]], [[2, 3], [1, 2], [0, 1]])
 
-intersection2 = Intersection(xml_to_dict('79190154_BOS210_ITF_COMPLETE.xml')
-                             , True,
+intersection2 = Intersection(xml_to_dict('79190154_BOS210_ITF_COMPLETE.xml'), True,
                              [[12, 22, 24, 32, 37], [3, 24], [4, 5, 12], [4, 5], [1, 3], [5, 11], [4, 12, 31], [3, 4],
                               [3, 4, 5], [1, 3, 24], [11, 38], [12, 24], [3, 5], [12, 22], [4, 5, 12, 31], [4, 5, 38],
                               [4, 12], [3, 38], [5, 11, 38], [12, 31], [12, 22, 31, 32], [5, 12], [1, 3, 22], [24, 37],
@@ -103,8 +102,7 @@ intersection2 = Intersection(xml_to_dict('79190154_BOS210_ITF_COMPLETE.xml')
                               [12, 22, 24, 31, 32], [3, 24, 37], [22, 28], [1, 22, 24, 37],
                               [12, 22, 24, 28, 31, 32, 37], [12, 22, 24, 28, 31, 32]], [[2, 3], [1, 2], [0, 1]])
 
-
-ci = ConnectedIntersections([intersection,intersection2], dimensions)
+ci = ConnectedIntersections([intersection, intersection2], dimensions)
 
 dim = dimensions
 
@@ -112,10 +110,10 @@ canvas_element = CanvasGrid(lane_draw, dim[0], dim[1], (dim[0] * 10), (dim[1] * 
 
 model_params = {
     "intersection": intersection,
-    'green_length' : UserSettableParameter("number", "Green Light Duration", 15),
-    'orange_length': UserSettableParameter("number", "Orange Light Duration", 5,),
-    'traffic_light_priority' : UserSettableParameter('checkbox', 'traffic_light_priority', value=True),
-    'ci':ci
+    'green_length': UserSettableParameter("number", "Green Light Duration", 15),
+    'orange_length': UserSettableParameter("number", "Orange Light Duration", 5, ),
+    'traffic_light_priority': UserSettableParameter('checkbox', 'traffic_light_priority', value=True),
+    'ci': ci
 }
 
 server = ModularServer(

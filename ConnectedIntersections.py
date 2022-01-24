@@ -35,8 +35,6 @@ class ConnectedIntersections:
                 x_lower_lim = x_upper_lim - x_base
                 y_lower_lim = y_upper_lim - y_base / 3
 
-                #print(np.mean([x_upper_lim, x_lower_lim]))
-                #print(j, int(np.mean((x_upper_lim, x_lower_lim))), int(np.mean((y_upper_lim, y_lower_lim))))
                 if j is not None:
                     j.center = ((int(np.mean((x_upper_lim, x_lower_lim))), int(np.mean((y_upper_lim, y_lower_lim)))))
 

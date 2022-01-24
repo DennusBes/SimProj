@@ -89,7 +89,6 @@ class LaneGroup:
                     egress_dict[int(i['connecting_lane'])].append(payload)
                 except KeyError:
                     egress_dict[int(i['connecting_lane'])] = [payload]
-
         try:
             return eval(f"{self.kind}_dict[lane_id]")
         except KeyError:

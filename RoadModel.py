@@ -110,7 +110,6 @@ class RoadModel(Model):
         for intersection in self.ci.intersections.reshape(1, 9)[0]:
             if intersection is not None:
 
-
                 groups = intersection.ingress_groups
 
                 for group in groups:
@@ -120,12 +119,9 @@ class RoadModel(Model):
 
                             self.traffic_light_control(lane, current_step, groups, intersection)
 
-                            rand = random.randint(0, 10)
-                            if rand == 5 or rand == 3 or rand == 1:
-                                lane.car_lists[0].add_car(Vehicle(1, self))
-                            elif lane.signal_group.state == 'green':
-                                if len(lane.car_lists[0].cars) > 0:
-                                    lane.car_lists[0].remove_car()
+                            self.spawn_vehicle(lane,0.4)
+                            if lane.signal_group.state == 'green':
+                                self.despawn_vehicle(lane)
 
     def get_traffic_prio(self, groups, intersection):
 
@@ -165,3 +161,13 @@ class RoadModel(Model):
                     intersection.traffic_light_combos[0]
 
             intersection.step_at_change = current_step + 1
+
+
+    def spawn_vehicle(self, lane, chance):
+        if random.random() < chance:
+            lane.car_lists[0].add_car(Vehicle(1, self))
+
+    def despawn_vehicle(self, lane):
+
+        if len(lane.car_lists[0].cars) > 0:
+            lane.car_lists[0].remove_car()
