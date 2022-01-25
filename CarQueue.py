@@ -14,4 +14,8 @@ class CarQueue:
     def remove_car(self):
 
         self.cars.pop(0)
+        
+    def clear_cars(self):
+        
+        self.cars.clear()
 
