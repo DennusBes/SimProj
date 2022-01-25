@@ -7,6 +7,7 @@ from mesa.time import BaseScheduler
 
 from FillerRoad import FillerRoad
 from Vehicle import Vehicle
+from Bus import Bus
 
 
 class RoadModel(Model):
@@ -21,18 +22,25 @@ class RoadModel(Model):
         self.intersection = intersection
         self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(self.ci.dimensions[0], self.ci.dimensions[1], torus=False)
+        self.bus_agent = [None, None]
+        self.x_y = [None, None]
+
         self.create_roads()
         # self.create_filler_roads()
-        self.create_vehicle()
 
     def create_roads(self):
         """ Places the lane agents on the canvas
 
         """
 
-        for intersection in self.ci.intersections.reshape(1, 9)[0]:
+        for intersection_id, intersection in enumerate(self.ci.intersections.reshape(1, 9)[0]):
+            # blijkbaar staat 6 voor de eerste intersection en 7 voor de tweede
+            if intersection_id == 6:
+                intersection_id = 0
+            elif intersection_id == 7:
+                intersection_id = 1
             if intersection is not None:
-
+                # print(intersection_id)
                 for lk in ['ingress', 'egress']:
 
                     # print(self.intersection.ingress_groups)
@@ -52,22 +60,28 @@ class RoadModel(Model):
                             lanes = lg.lanes
 
                             for j in range(length):
-
                                 x_pos = (int(lg.lon) + dir_keys[counter + 1][0] * j)
                                 y_pos = (int(lg.lat) + dir_keys[counter + 1][1] * j)
 
                                 for i, lane in enumerate(lanes):
+                                    # print("Intersection: ", intersection_id, ": lane: ",lane.ID, (int(lane.bus.buslane[0]), int(lane.bus.buslane[1])))
+                                    # if int(lane.ID) == int(lane.bus.buslane[intersection_id]):
+                                    #     print("lane_id : ",lane.ID)
+                                    # print(intersection_id, int(lane.bus.buslane[intersection_id]))
+
+                                    # print(self.x_y)
+                                    bus_lane = int(lane.bus.buslane[intersection_id])
                                     self.grid.place_agent(lane, (
                                         x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
                                         y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
 
                                     # placing the carqueue objects
-                                    if (j == 1 or j == 3) and lk == 'ingress':
+                                    if (j == 1) and lk == 'ingress':
 
-                                        if j == 1:
+                                        if j == 1: 
                                             ind = 0
-                                        if j == 3:
-                                            ind = 1
+                                        # if j == 3 and int(lane.ID) == int(lane.bus.buslane):
+                                        #     ind = 1
 
                                         self.grid.place_agent(lane.car_lists[ind], (
                                             x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
@@ -77,6 +91,18 @@ class RoadModel(Model):
                                         self.grid.place_agent(lane.signal_group, (
                                             x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
                                             y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
+                                    
+                                    if j == 2 and lk == 'ingress' and int(lane.ID) == bus_lane:
+                                            x_cor = x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i
+                                            y_cor = y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i
+                                            # stores coordinates where bus icons will be
+                                            self.x_y[intersection_id] = (x_cor, y_cor)
+                                    if j == 3 and lk == 'ingress' and int(lane.ID) == bus_lane:
+                                        print("intersectionID:",intersection_id, " bus_lane:",int(lane.bus.buslane[intersection_id]))
+                                        self.grid.place_agent(lane.car_lists[1], (
+                                            x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
+                                            y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
+
 
     def create_filler_roads(self):
 
@@ -96,18 +122,16 @@ class RoadModel(Model):
             for j in lst:
                 self.grid.place_agent(FillerRoad(i + j), (i, j))
 
-    def create_vehicle(self):
-        for i in range(1):
-            vehicle = Vehicle(i, self)
-            self.grid.place_agent(vehicle, (12, 23 - i))
-            self.schedule.add(vehicle)
-
     def step(self):
 
         self.schedule.step()
         current_step = self.schedule.steps
 
-        for intersection in self.ci.intersections.reshape(1, 9)[0]:
+        for intersection_id, intersection in enumerate(self.ci.intersections.reshape(1, 9)[0]):
+            if intersection_id == 6:
+                intersection_id = 0
+            elif intersection_id == 7:
+                intersection_id = 1
             if intersection is not None:
 
                 groups = intersection.ingress_groups
@@ -116,12 +140,18 @@ class RoadModel(Model):
                     if group is not None:
                         lanes = group.lanes
                         for lane in lanes:
-
+                            bus_lane = int(lane.bus.buslane[intersection_id])                                
                             self.traffic_light_control(lane, current_step, groups, intersection)
 
-                            self.spawn_vehicle(lane,0.4)
+                            self.spawn_vehicle(lane,0.4, intersection_id)
                             if lane.signal_group.state == 'green':
                                 self.despawn_vehicle(lane)
+                            
+                            if int(lane.ID) == bus_lane:
+                                if self.bus_agent[intersection_id] == None:
+                                    self.spawn_bus(0.1, intersection_id)
+                                if lane.signal_group.state == 'green' and self.bus_agent[intersection_id] != None:
+                                    self.despawn_bus(lane, intersection_id)							
 
     def get_traffic_prio(self, groups, intersection):
 
@@ -163,11 +193,51 @@ class RoadModel(Model):
             intersection.step_at_change = current_step + 1
 
 
-    def spawn_vehicle(self, lane, chance):
+    def spawn_vehicle(self, lane, chance, intersection_id):
         if random.random() < chance:
-            lane.car_lists[0].add_car(Vehicle(1, self))
+            bus_lane = int(lane.bus.buslane[intersection_id])
+
+            if self.bus_agent[intersection_id] != None and int(lane.ID) == bus_lane:
+                lane.car_lists[1].add_car(Vehicle(5, self))
+            else:
+                lane.car_lists[0].add_car(Vehicle(5, self))
+            # print(len(lane.car_lists[0].cars))
+
+            if int(lane.ID) == int(lane.bus.buslane[intersection_id]):
+                print("vehicles: ", len(lane.car_lists[0].cars), "laneID: ", lane.ID)
+            # print("car spawned.")
+            # print("amount of cars", len(lane.car_lists[0].cars))
 
     def despawn_vehicle(self, lane):
-
         if len(lane.car_lists[0].cars) > 0:
             lane.car_lists[0].remove_car()
+            # print("car despawned.")
+            # print("amount of cars", len(lane.car_lists[0].cars))	            
+
+    def spawn_bus(self, chance, intersection_id):
+        if random.random() < chance:
+            self.bus_agent[intersection_id] = Bus(intersection_id, self)
+            print("Bus created id: ", intersection_id)
+
+            self.schedule.add(self.bus_agent[intersection_id])
+            self.grid.place_agent(self.bus_agent[intersection_id], self.x_y[intersection_id])
+            
+            # print("bus spawned.")
+
+    def despawn_bus(self, lane, intersection_id):
+        if len(lane.car_lists[0].cars) < 1:
+            print("lane_id: ", lane.ID, " cars: ", len(lane.car_lists[0].cars))
+            print("despawned")
+
+            self.grid.remove_agent(self.bus_agent[intersection_id])
+            self.schedule.remove(self.bus_agent[intersection_id])
+            self.bus_agent[intersection_id] = None
+            print("Bus removed id: ", intersection_id)
+            if len(lane.car_lists[1].cars) > 0:
+                print("list 1: ",len(lane.car_lists[1].cars))
+                print("list 0: ",len(lane.car_lists[0].cars))
+                for i in lane.car_lists[1].cars:
+                    lane.car_lists[0].add_car(i)
+                lane.car_lists[1].clear_cars()
+
+            # print("bus despawned.")
