@@ -1,9 +1,11 @@
 from Vehicle import Vehicle
-class Bus:
 
-    def __init__(self):
+from mesa import Agent
 
-        Vehicle.__init__(self)
+class Bus(Agent):
+
+    def __init__(self, unique_id, model):
+        super().__init__(unique_id, model)
         self.weight = 1
         self.shape = 'bus.png'
         self.color = ''
@@ -11,5 +13,3 @@ class Bus:
         self.layer = 2
         self.delete_agent = False
         self.crossed_intersection = False
-
-
