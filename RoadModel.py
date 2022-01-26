@@ -161,9 +161,9 @@ class RoadModel(Model):
                 lanes = group.lanes
                 for lane in lanes:
                     try:
-                        prio_dict[lane.signal_group.ID] += len(lane.car_lists[0].cars)
+                        prio_dict[lane.signal_group.ID] += (len(lane.car_lists[0].cars) + len(lane.car_lists[1].cars))
                     except KeyError:
-                        prio_dict[lane.signal_group.ID] = len(lane.car_lists[0].cars)
+                        prio_dict[lane.signal_group.ID] = (len(lane.car_lists[0].cars) + len(lane.car_lists[1].cars))
 
         combos = intersection.traffic_light_combos
 
