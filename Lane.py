@@ -8,6 +8,7 @@ class Lane:
         self.lon = lon
         self.ID = ID
         self.color = color
+        self.bus = None
         self.intersection = intersection
         self.kind = kind
         self.connections = connections

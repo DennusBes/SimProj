@@ -215,7 +215,10 @@ class RoadModel(Model):
 
     def spawn_bus(self, chance, intersection_id, lane):
         if random.random() < chance:
-            self.bus_agent[intersection_id] = Bus(intersection_id, self)
+
+            bus = Bus(intersection_id, self)
+            self.bus_agent[intersection_id] = bus
+            lane.bus = bus
             print("Bus created id: ", intersection_id)
 
             self.schedule.add(self.bus_agent[intersection_id])
@@ -231,6 +234,7 @@ class RoadModel(Model):
             self.grid.remove_agent(self.bus_agent[intersection_id])
             self.schedule.remove(self.bus_agent[intersection_id])
             self.bus_agent[intersection_id] = None
+            lane.bus = None
             print("Bus removed id: ", intersection_id)
             if len(lane.car_lists[1].cars) > 0:
                 print("list 1: ", len(lane.car_lists[1].cars))
