@@ -35,10 +35,10 @@ class RoadModel(Model):
 
         self.datacollector = DataCollector(
             model_reporters={
-                # "cars_1": self.car_wait_time_1,
-                # "cars_2": self.car_wait_time_2,
-                # "busses_1": self.bus_wait_time_1,
-                # "busses_2": self.bus_wait_time_2
+                "cars_1": self.car_wait_time_1,
+                "cars_2": self.car_wait_time_2,
+                "busses_1": self.bus_wait_time_1,
+                "busses_2": self.bus_wait_time_2
             }
         )
         self.running=True
@@ -168,7 +168,7 @@ class RoadModel(Model):
 
                             self.spawn_vehicle(lane, self.car_spawn_rate, intersection_id)
                             if lane.signal_group.state == 'green':
-                                self.despawn_vehicle(lane)
+                                self.despawn_vehicle(lane, intersection_id)
 
                             if int(lane.ID) == bus_lane:
                                 if lane.bus is None:
