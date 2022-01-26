@@ -5,9 +5,9 @@ from mesa import Model
 from mesa.space import MultiGrid
 from mesa.time import BaseScheduler
 
+from Bus import Bus
 from FillerRoad import FillerRoad
 from Vehicle import Vehicle
-from Bus import Bus
 
 
 class RoadModel(Model):
@@ -15,16 +15,17 @@ class RoadModel(Model):
     def __init__(self, intersection, green_length, orange_length, bus_weight, traffic_light_priority, ci):
 
         super().__init__()
-        self.bus_lanes = [13, 8]
+
         self.bus_weight = bus_weight
         self.traffic_light_priority = traffic_light_priority
         self.ci = ci
+        self.bus_lanes = self.ci.bus_lanes
         self.green_length = green_length
         self.orange_length = orange_length
         self.intersection = intersection
         self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(self.ci.dimensions[0], self.ci.dimensions[1], torus=False)
-        self.bus_spawns = [None, None]
+        self.bus_spawns = [None for _ in self.ci.intersections_list]
 
         self.create_roads()
         # self.create_filler_roads()
@@ -165,9 +166,11 @@ class RoadModel(Model):
                         bus_weight = int(lane.bus.weight)
 
                     try:
-                        prio_dict[lane.signal_group.ID] += (len(lane.car_lists[0].cars) + len(lane.car_lists[1].cars) + bus_weight)
+                        prio_dict[lane.signal_group.ID] += (
+                                    len(lane.car_lists[0].cars) + len(lane.car_lists[1].cars) + bus_weight)
                     except KeyError:
-                        prio_dict[lane.signal_group.ID] = (len(lane.car_lists[0].cars) + len(lane.car_lists[1].cars) + bus_weight)
+                        prio_dict[lane.signal_group.ID] = (
+                                    len(lane.car_lists[0].cars) + len(lane.car_lists[1].cars) + bus_weight)
 
         combos = intersection.traffic_light_combos
 
@@ -219,7 +222,7 @@ class RoadModel(Model):
 
     def spawn_bus(self, chance, intersection_id, lane):
         if random.random() < chance:
-            bus = Bus(intersection_id,self.bus_weight, self)
+            bus = Bus(intersection_id, self.bus_weight, self)
             lane.bus = bus
             print("Bus created id: ", intersection_id)
 
@@ -233,9 +236,11 @@ class RoadModel(Model):
             print("lane_id: ", lane.ID, " cars: ", len(lane.car_lists[0].cars))
             print("despawned")
 
-            self.grid.remove_agent(lane.bus)
-            self.schedule.remove(lane.bus)
-            lane.bus is None
+            try:
+                self.grid.remove_agent(lane.bus)
+                self.schedule.remove(lane.bus)
+            except ValueError:
+                pass
             lane.bus = None
             print("Bus removed id: ", intersection_id)
             if len(lane.car_lists[1].cars) > 0:

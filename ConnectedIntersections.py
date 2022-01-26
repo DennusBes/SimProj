@@ -3,7 +3,8 @@ import numpy as np
 
 class ConnectedIntersections:
 
-    def __init__(self, intersections_list, dimensions):
+    def __init__(self, intersections_list, dimensions, bus_lanes):
+        self.bus_lanes = bus_lanes
         self.intersections_list = intersections_list
         self.dimensions = dimensions
         self.intersections = np.empty((3, 3), dtype=object)

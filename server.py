@@ -102,7 +102,7 @@ intersection2 = Intersection(xml_to_dict('79190154_BOS210_ITF_COMPLETE.xml'), Tr
                               [12, 22, 24, 31, 32], [3, 24, 37], [22, 28], [1, 22, 24, 37],
                               [12, 22, 24, 28, 31, 32, 37], [12, 22, 24, 28, 31, 32]], [[2, 3], [1, 2], [0, 1]])
 
-ci = ConnectedIntersections([intersection, intersection2], dimensions)
+ci = ConnectedIntersections([intersection, intersection2], dimensions, bus_lanes=[13, 8])
 
 dim = dimensions
 
