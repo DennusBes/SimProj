@@ -6,7 +6,6 @@ class ConnectedIntersections:
     def __init__(self, intersections_list, dimensions):
         self.intersections_list = intersections_list
         self.dimensions = dimensions
-
         self.intersections = np.empty((3, 3), dtype=object)
         self.fill_intersections_matrix()
         self.create_centerpoints()
@@ -16,10 +15,13 @@ class ConnectedIntersections:
 
         il = self.intersections_list.copy()
 
+        count_list = []
         for i in range(self.intersections.shape[0], 0, -1):
             for j in range(self.intersections.shape[1]):
                 try:
                     self.intersections[i, j] = il[-1]
+                    self.intersections[i, j].ID = len(count_list)
+                    count_list.append('')
                     del il[-1]
                 except IndexError:
                     continue
@@ -43,6 +45,5 @@ class ConnectedIntersections:
         for count_1, i in enumerate(self.intersections):
             for count_2, j in enumerate(i):
 
-                if self.intersections[count_1,count_2] is not None:
-                    self.intersections[count_1,count_2].fill_intersection()
-
+                if self.intersections[count_1, count_2] is not None:
+                    self.intersections[count_1, count_2].fill_intersection()
