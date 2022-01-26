@@ -23,7 +23,7 @@ class RoadModel(Model):
         self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(self.ci.dimensions[0], self.ci.dimensions[1], torus=False)
         self.bus_agent = [None, None]
-        self.x_y = [None, None]
+        self.bus_spawns = [None, None]
 
         self.create_roads()
         # self.create_filler_roads()
@@ -96,7 +96,7 @@ class RoadModel(Model):
                                             x_cor = x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i
                                             y_cor = y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i
                                             # stores coordinates where bus icons will be
-                                            self.x_y[intersection_id] = (x_cor, y_cor)
+                                            self.bus_spawns[intersection_id] = (x_cor, y_cor)
                                     if j == 3 and lk == 'ingress' and int(lane.ID) == bus_lane:
                                         print("intersectionID:",intersection_id, " bus_lane:",int(lane.bus.buslane[intersection_id]))
                                         self.grid.place_agent(lane.car_lists[1], (
@@ -221,7 +221,7 @@ class RoadModel(Model):
             print("Bus created id: ", intersection_id)
 
             self.schedule.add(self.bus_agent[intersection_id])
-            self.grid.place_agent(self.bus_agent[intersection_id], self.x_y[intersection_id])
+            self.grid.place_agent(self.bus_agent[intersection_id], self.bus_spawns[intersection_id])
             
             # print("bus spawned.")
 
