@@ -24,7 +24,6 @@ class RoadModel(Model):
         self.intersection = intersection
         self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(self.ci.dimensions[0], self.ci.dimensions[1], torus=False)
-        self.bus_agent = [None, None]
         self.bus_spawns = [None, None]
 
         self.create_roads()
@@ -148,9 +147,9 @@ class RoadModel(Model):
                                 self.despawn_vehicle(lane)
 
                             if int(lane.ID) == bus_lane:
-                                if self.bus_agent[intersection_id] == None:
+                                if lane.bus is None:
                                     self.spawn_bus(0.1, intersection_id, lane)
-                                if lane.signal_group.state == 'green' and self.bus_agent[intersection_id] != None:
+                                if lane.signal_group.state == 'green' and lane.bus is not None:
                                     self.despawn_bus(lane, intersection_id)
 
     def get_traffic_prio(self, groups, intersection):
@@ -196,7 +195,7 @@ class RoadModel(Model):
         if random.random() < chance:
             bus_lane = int(self.bus_lanes[intersection_id])
 
-            if self.bus_agent[intersection_id] != None and int(lane.ID) == bus_lane:
+            if lane.bus is not None and int(lane.ID) == bus_lane:
                 lane.car_lists[1].add_car(Vehicle(self))
             else:
                 lane.car_lists[0].add_car(Vehicle(self))
@@ -215,14 +214,12 @@ class RoadModel(Model):
 
     def spawn_bus(self, chance, intersection_id, lane):
         if random.random() < chance:
-
             bus = Bus(intersection_id, self)
-            self.bus_agent[intersection_id] = bus
             lane.bus = bus
             print("Bus created id: ", intersection_id)
 
-            self.schedule.add(self.bus_agent[intersection_id])
-            self.grid.place_agent(self.bus_agent[intersection_id], self.bus_spawns[intersection_id])
+            self.schedule.add(lane.bus)
+            self.grid.place_agent(lane.bus, self.bus_spawns[intersection_id])
 
             # print("bus spawned.")
 
@@ -231,9 +228,9 @@ class RoadModel(Model):
             print("lane_id: ", lane.ID, " cars: ", len(lane.car_lists[0].cars))
             print("despawned")
 
-            self.grid.remove_agent(self.bus_agent[intersection_id])
-            self.schedule.remove(self.bus_agent[intersection_id])
-            self.bus_agent[intersection_id] = None
+            self.grid.remove_agent(lane.bus)
+            self.schedule.remove(lane.bus)
+            lane.bus is None
             lane.bus = None
             print("Bus removed id: ", intersection_id)
             if len(lane.car_lists[1].cars) > 0:
