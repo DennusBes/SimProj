@@ -112,6 +112,7 @@ model_params = {
     "intersection": intersection,
     'green_length': UserSettableParameter("number", "Green Light Duration", 15),
     'orange_length': UserSettableParameter("number", "Orange Light Duration", 5, ),
+    'bus_weight': UserSettableParameter("number", "Bus Weight", 50, ),
     'traffic_light_priority': UserSettableParameter('checkbox', 'traffic_light_priority', value=True),
     'ci': ci
 }

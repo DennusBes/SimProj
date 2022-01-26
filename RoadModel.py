@@ -12,9 +12,11 @@ from Bus import Bus
 
 class RoadModel(Model):
 
-    def __init__(self, intersection, green_length, orange_length, traffic_light_priority, ci):
+    def __init__(self, intersection, green_length, orange_length, bus_weight, traffic_light_priority, ci):
 
         super().__init__()
+        self.bus_lanes = [13,8]
+        self.bus_weight = bus_weight
         self.traffic_light_priority = traffic_light_priority
         self.ci = ci
         self.green_length = green_length
@@ -70,7 +72,7 @@ class RoadModel(Model):
                                     # print(intersection_id, int(lane.bus.buslane[intersection_id]))
 
                                     # print(self.x_y)
-                                    bus_lane = int(lane.bus.buslane[intersection_id])
+                                    bus_lane = int(self.bus_lanes[intersection_id])
                                     self.grid.place_agent(lane, (
                                         x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
                                         y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
@@ -98,7 +100,7 @@ class RoadModel(Model):
                                             # stores coordinates where bus icons will be
                                             self.bus_spawns[intersection_id] = (x_cor, y_cor)
                                     if j == 3 and lk == 'ingress' and int(lane.ID) == bus_lane:
-                                        print("intersectionID:",intersection_id, " bus_lane:",int(lane.bus.buslane[intersection_id]))
+                                        print("intersectionID:",intersection_id, " bus_lane:",int(self.bus_lanes[intersection_id]))
                                         self.grid.place_agent(lane.car_lists[1], (
                                             x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
                                             y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
@@ -141,7 +143,7 @@ class RoadModel(Model):
                         lanes = group.lanes
                         for lane in lanes:
 
-                            bus_lane = int(lane.bus.buslane[intersection_id])                                
+                            bus_lane = int(self.bus_lanes[intersection_id])
                             self.traffic_light_control(lane, current_step, groups, intersection)
 
                             self.spawn_vehicle(lane,0.4, intersection_id)
@@ -150,7 +152,7 @@ class RoadModel(Model):
                             
                             if int(lane.ID) == bus_lane:
                                 if self.bus_agent[intersection_id] == None:
-                                    self.spawn_bus(0.1, intersection_id)
+                                    self.spawn_bus(0.1, intersection_id, lane)
                                 if lane.signal_group.state == 'green' and self.bus_agent[intersection_id] != None:
                                     self.despawn_bus(lane, intersection_id)							
 
@@ -196,7 +198,7 @@ class RoadModel(Model):
 
     def spawn_vehicle(self, lane, chance, intersection_id):
         if random.random() < chance:
-            bus_lane = int(lane.bus.buslane[intersection_id])
+            bus_lane = int(self.bus_lanes[intersection_id])
 
             if self.bus_agent[intersection_id] != None and int(lane.ID) == bus_lane:
                 lane.car_lists[1].add_car(Vehicle(self))
@@ -204,7 +206,7 @@ class RoadModel(Model):
                 lane.car_lists[0].add_car(Vehicle(self))
             # print(len(lane.car_lists[0].cars))
 
-            if int(lane.ID) == int(lane.bus.buslane[intersection_id]):
+            if int(lane.ID) == int(self.bus_lanes[intersection_id]):
                 print("vehicles: ", len(lane.car_lists[0].cars), "laneID: ", lane.ID)
             # print("car spawned.")
             # print("amount of cars", len(lane.car_lists[0].cars))
@@ -215,7 +217,7 @@ class RoadModel(Model):
             # print("car despawned.")
             # print("amount of cars", len(lane.car_lists[0].cars))	            
 
-    def spawn_bus(self, chance, intersection_id):
+    def spawn_bus(self, chance, intersection_id, lane):
         if random.random() < chance:
             self.bus_agent[intersection_id] = Bus(intersection_id, self)
             print("Bus created id: ", intersection_id)

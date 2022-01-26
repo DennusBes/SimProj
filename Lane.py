@@ -1,6 +1,5 @@
 from CarQueue import CarQueue
 from TrafficLight import TrafficLight
-from BusQueue import BusQueue
 
 class Lane:
 
@@ -15,7 +14,6 @@ class Lane:
         self.shape = 'rect'
         self.layer = 0
         self.car_lists = [CarQueue(i) for i in range(2)]
-        self.bus = BusQueue()
         self.signal_group = None
         self.get_signal_group()
 
