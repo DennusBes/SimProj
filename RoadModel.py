@@ -11,6 +11,7 @@ from FillerRoad import FillerRoad
 from Vehicle import Vehicle
 from VehicleGraveyard import VehicleGraveyard
 
+
 class RoadModel(Model):
 
     def __init__(self, green_length, orange_length, bus_weight, traffic_light_priority, ci,
@@ -41,7 +42,7 @@ class RoadModel(Model):
                 "busses_2": self.bus_wait_time_2
             }
         )
-        self.running=True
+        self.running = True
         self.datacollector.collect(self)
 
     def create_roads(self):
@@ -115,7 +116,6 @@ class RoadModel(Model):
         """ place FillerRoad agents between the lanes
 
         """
-
 
         x, y = intersection.center
         x, y = int(x), int(y)
@@ -193,6 +193,8 @@ class RoadModel(Model):
 
     def traffic_light_control(self, lane, current_step, groups, intersection):
 
+        print(intersection.step_at_change)
+
         if lane.signal_group.ID not in intersection.current_green:
             lane.signal_group.change_state('red')
             lane.signal_group.ticks_since_state_change += 1
@@ -203,7 +205,7 @@ class RoadModel(Model):
             lane.signal_group.ticks_since_state_change = 0
         if intersection.step_at_change + self.green_length == current_step and lane.signal_group.state == 'green':
             lane.signal_group.change_state('orange')
-        if intersection.step_at_change + self.green_length + self.orange_length == current_step and lane.signal_group.state == 'orange':
+        if intersection.step_at_change + self.green_length + self.orange_length == current_step:
             lane.signal_group.change_state('red')
             if self.traffic_light_priority:
                 pity = intersection.pity_traffic_light
@@ -212,8 +214,9 @@ class RoadModel(Model):
                 try:
                     intersection.current_green = intersection.traffic_light_combos[
                         intersection.traffic_light_combos.index(intersection.current_green) + 1]
+
                 except IndexError:
-                    intersection.traffic_light_combos[0]
+                    intersection.current_green = intersection.traffic_light_combos[0]
 
             intersection.step_at_change = current_step + 1
 
@@ -230,7 +233,7 @@ class RoadModel(Model):
     def despawn_vehicle(self, lane, intersection_id):
         if len(lane.car_lists[0].cars) > 0:
             self.vehicle_graveyard[intersection_id].add_car(lane.car_lists[0].cars[0])
-            lane.car_lists[0].remove_car()            
+            lane.car_lists[0].remove_car()
 
     def spawn_bus(self, chance, intersection_id, lane):
         if random.random() < chance:
@@ -274,7 +277,7 @@ class RoadModel(Model):
             wait_times = []
             for car in self.vehicle_graveyard[0].cars:
                 wait_times.append(car.wait_time)
-            return sum(wait_times)/len(wait_times)
+            return sum(wait_times) / len(wait_times)
         else:
             return 0
 
@@ -286,9 +289,9 @@ class RoadModel(Model):
             wait_times = []
             for car in self.vehicle_graveyard[1].cars:
                 wait_times.append(car.wait_time)
-            return sum(wait_times)/len(wait_times)
+            return sum(wait_times) / len(wait_times)
         else:
-            return 0            
+            return 0
 
     def bus_wait_time_1(self):
         """
@@ -298,7 +301,7 @@ class RoadModel(Model):
             wait_times = []
             for bus in self.vehicle_graveyard[0].busses:
                 wait_times.append(bus.wait_time)
-            return sum(wait_times)/len(wait_times)
+            return sum(wait_times) / len(wait_times)
         else:
             return 0
 
@@ -310,9 +313,9 @@ class RoadModel(Model):
             wait_times = []
             for bus in self.vehicle_graveyard[1].busses:
                 wait_times.append(bus.wait_time)
-            return sum(wait_times)/len(wait_times)
+            return sum(wait_times) / len(wait_times)
         else:
-            return 0 
+            return 0
 
     def increase_waiting_time(self, lane):
         if len(lane.car_lists[0].cars) > 0:
