@@ -144,7 +144,8 @@ max_speed = int(intersection1.xml_dict['topology']['mapData']['intersections']['
                     'speedLimits']['regulatorySpeedLimit']['speed'])
 
 yellow_light_duration = round(calculate_yellow_light(max_speed))
-red_clearence_time = round(calculate_red_clearence_interval(max_speed, 62))
+red_clearence_time = round(calculate_red_clearence_interval(max_speed, 52))
+
 model_params = {
     'green_length': UserSettableParameter("number", "Green Light Duration", 36),
     'orange_length': UserSettableParameter("number", "Orange Light Duration", yellow_light_duration),
