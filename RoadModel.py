@@ -4,6 +4,7 @@ import numpy as np
 from mesa import Model
 from mesa.space import MultiGrid
 from mesa.time import BaseScheduler
+from mesa.datacollection import DataCollector
 
 from Bus import Bus
 from FillerRoad import FillerRoad
@@ -31,6 +32,17 @@ class RoadModel(Model):
 
         self.create_roads()
         # self.create_filler_roads()
+
+        self.datacollector = DataCollector(
+            model_reporters={
+                "cars_1": self.car_wait_time_1,
+                "cars_2": self.car_wait_time_2,
+                "busses_1": self.bus_wait_time_1,
+                "busses_2": self.bus_wait_time_2
+            }
+        )
+        self.running=True
+        self.datacollector.collect(self)
 
     def create_roads(self):
         """ Places the lane agents on the canvas
@@ -133,6 +145,7 @@ class RoadModel(Model):
     def step(self):
 
         self.schedule.step()
+        self.datacollector.collect(self)
         current_step = self.schedule.steps
 
         for intersection_id, intersection in enumerate(self.ci.intersections.reshape(1, 9)[0]):
