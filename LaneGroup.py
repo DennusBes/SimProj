@@ -106,7 +106,9 @@ class LaneGroup:
                       list(self.lane_df[self.lane_df['laneID'] == f'{x}']['nodes'])[0]['nodeXY'][0]['node-LatLon'][
                           'lat'],
                       list(self.lane_df[self.lane_df['laneID'] == f'{x}']['nodes'])[0]['nodeXY'][0]['node-LatLon'][
-                          'lon']) for x in
+                          'lon'],
+                      list(df[['laneID', 'laneAttributes']][df['laneID'] == str(x)]['laneAttributes'])[0]['sharedWith'])
+                 for x in
                  lane_numbers]
 
         self.lanes = lanes

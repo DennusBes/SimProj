@@ -3,11 +3,12 @@ from TrafficLight import TrafficLight
 
 class Lane:
 
-    def __init__(self, ID, color, kind, connections, intersection, lat, lon):
+    def __init__(self, ID, color, kind, connections, intersection, lat, lon, shared_with):
         self.lat = lat
         self.lon = lon
         self.ID = ID
         self.color = color
+        self.shared_with = shared_with
         self.bus = None
         self.intersection = intersection
         self.kind = kind

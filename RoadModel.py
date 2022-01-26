@@ -212,12 +212,12 @@ class RoadModel(Model):
 
         if random.random() < chance:
             bus_lane = int(self.bus_lanes[intersection_id])
-
-            if lane.bus is not None and int(lane.ID) == bus_lane:
-                lane.car_lists[1].add_car(Vehicle(self))
-            else:
-                lane.car_lists[0].add_car(Vehicle(self))
-            # print(len(lane.car_lists[0].cars))
+            if lane.shared_with[4] != '1':
+                if lane.bus is not None and int(lane.ID) == bus_lane:
+                    lane.car_lists[1].add_car(Vehicle(self))
+                else:
+                    lane.car_lists[0].add_car(Vehicle(self))
+                # print(len(lane.car_lists[0].cars))
 
             if int(lane.ID) == int(self.bus_lanes[intersection_id]):
                 print("vehicles: ", len(lane.car_lists[0].cars), "laneID: ", lane.ID)
