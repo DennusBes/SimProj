@@ -13,3 +13,7 @@ class Bus(Agent):
         self.layer = 2
         self.delete_agent = False
         self.crossed_intersection = False
+        self.wait_time = 0
+
+    def increase_wait_time(self):
+        self.wait_time += 1
