@@ -29,7 +29,7 @@ class RoadModel(Model):
         self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(self.ci.dimensions[0], self.ci.dimensions[1], torus=False)
         self.bus_spawns = [None for _ in self.ci.intersections_list]
-        self.vehicle_graveyard = [VehicleGraveyard(i) for i in range(len(self.ci.intersections_list))]
+        self.vehicle_graveyard = [VehicleGraveyard(int(i.ID)) for i in self.ci.intersections_list]
 
         self.create_roads()
         # self.create_filler_roads()
@@ -193,8 +193,6 @@ class RoadModel(Model):
 
     def traffic_light_control(self, lane, current_step, groups, intersection):
 
-        print(intersection.step_at_change)
-
         if lane.signal_group.ID not in intersection.current_green:
             lane.signal_group.change_state('red')
             lane.signal_group.ticks_since_state_change += 1
@@ -258,26 +256,15 @@ class RoadModel(Model):
                     lane.car_lists[0].add_car(i)
                 lane.car_lists[1].clear_cars()
 
-    def increase_waiting_time(self, lane):
-        if len(lane.car_lists[0].cars) > 0:
-            for car in lane.car_lists[0].cars:
-                car.increase_wait_time()
-        if len(lane.car_lists[1].cars) > 0:
-            for car in lane.car_lists[1].cars:
-                car.increase_wait_time()
-
-        if lane.bus is not None:
-            lane.bus.increase_wait_time()
 
     def car_wait_time_1(self):
         """
         returns avg. waiting time per car in intersection 1
         """
+
         if len(self.vehicle_graveyard[0].cars) > 0:
-            wait_times = []
-            for car in self.vehicle_graveyard[0].cars:
-                wait_times.append(car.wait_time)
-            return sum(wait_times) / len(wait_times)
+
+            return np.mean([car.wait_time for car in self.vehicle_graveyard[0].cars])
         else:
             return 0
 
@@ -286,10 +273,8 @@ class RoadModel(Model):
         returns avg. waiting time per car in intersection 2
         """
         if len(self.vehicle_graveyard[1].cars) > 0:
-            wait_times = []
-            for car in self.vehicle_graveyard[1].cars:
-                wait_times.append(car.wait_time)
-            return sum(wait_times) / len(wait_times)
+
+            return np.mean([car.wait_time for car in self.vehicle_graveyard[1].cars])
         else:
             return 0
 
@@ -298,10 +283,8 @@ class RoadModel(Model):
         returns avg. waiting time per bus in intersection 1
         """
         if len(self.vehicle_graveyard[0].busses) > 0:
-            wait_times = []
-            for bus in self.vehicle_graveyard[0].busses:
-                wait_times.append(bus.wait_time)
-            return sum(wait_times) / len(wait_times)
+
+            return np.mean([bus.wait_time for bus in self.vehicle_graveyard[0].busses])
         else:
             return 0
 
@@ -310,19 +293,15 @@ class RoadModel(Model):
         returns avg. waiting time per bus in intersection 2
         """
         if len(self.vehicle_graveyard[1].busses) > 0:
-            wait_times = []
-            for bus in self.vehicle_graveyard[1].busses:
-                wait_times.append(bus.wait_time)
-            return sum(wait_times) / len(wait_times)
+
+            return np.mean([bus.wait_time for bus in self.vehicle_graveyard[1].busses])
         else:
             return 0
 
     def increase_waiting_time(self, lane):
-        if len(lane.car_lists[0].cars) > 0:
-            for car in lane.car_lists[0].cars:
-                car.increase_wait_time()
-        if len(lane.car_lists[1].cars) > 0:
-            for car in lane.car_lists[1].cars:
+
+        for i in range(2):
+            for car in lane.car_lists[i].cars:
                 car.increase_wait_time()
 
         if lane.bus is not None:
