@@ -115,7 +115,7 @@ model_params = {
     'traffic_light_priority': UserSettableParameter('checkbox', 'traffic_light_priority', value=True),
     'ci': ci,
     'pity_timer_limit': UserSettableParameter("number", "Pity Timer Limit", 120),
-    'car_spawn_rate': UserSettableParameter("number", "Car Spawn Rate (chance per tick)", 0.04748553240740742),
+    'car_spawn_rate': UserSettableParameter("number", "Car Spawn Rate (chance per tick)", round(0.04748553240740742,4)),
 
 }
 
