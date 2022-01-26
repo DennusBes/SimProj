@@ -35,10 +35,10 @@ class RoadModel(Model):
 
         self.datacollector = DataCollector(
             model_reporters={
-                "cars_1": self.car_wait_time_1,
-                "cars_2": self.car_wait_time_2,
-                "busses_1": self.bus_wait_time_1,
-                "busses_2": self.bus_wait_time_2
+                # "cars_1": self.car_wait_time_1,
+                # "cars_2": self.car_wait_time_2,
+                # "busses_1": self.bus_wait_time_1,
+                # "busses_2": self.bus_wait_time_2
             }
         )
         self.running=True
@@ -244,8 +244,9 @@ class RoadModel(Model):
             # print("car spawned.")
             # print("amount of cars", len(lane.car_lists[0].cars))
 
-    def despawn_vehicle(self, lane):
+    def despawn_vehicle(self, lane, intersection_id):
         if len(lane.car_lists[0].cars) > 0:
+            self.vehicle_graveyard[intersection_id].add_car(lane.car_lists[0].cars[0])
             lane.car_lists[0].remove_car()
             # print("car despawned.")
             # print("amount of cars", len(lane.car_lists[0].cars))	            
@@ -264,6 +265,7 @@ class RoadModel(Model):
 
     def despawn_bus(self, lane, intersection_id):
         if len(lane.car_lists[0].cars) < 1:
+            self.vehicle_graveyard[intersection_id].add_bus(lane.bus)            
             print("lane_id: ", lane.ID, " cars: ", len(lane.car_lists[0].cars))
             print("despawned")
 
