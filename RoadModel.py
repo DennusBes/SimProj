@@ -57,10 +57,7 @@ class RoadModel(Model):
 
                 self.create_filler_roads(intersection)
 
-                # print(intersection_id)
                 for lk in ['ingress', 'egress']:
-
-                    # print(self.intersection.ingress_groups)
 
                     data = eval(f'intersection.{lk}_groups')
 
@@ -81,12 +78,6 @@ class RoadModel(Model):
                                 y_pos = (int(lg.lat) + dir_keys[counter + 1][1] * j)
 
                                 for i, lane in enumerate(lanes):
-                                    # print("Intersection: ", intersection_id, ": lane: ",lane.ID, (int(lane.bus.buslane[0]), int(lane.bus.buslane[1])))
-                                    # if int(lane.ID) == int(lane.bus.buslane[intersection_id]):
-                                    #     print("lane_id : ",lane.ID)
-                                    # print(intersection_id, int(lane.bus.buslane[intersection_id]))
-
-                                    # print(self.x_y)
                                     bus_lane = int(self.bus_lanes[intersection_id])
                                     self.grid.place_agent(lane, (
                                         x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
@@ -115,8 +106,6 @@ class RoadModel(Model):
                                         # stores coordinates where bus icons will be
                                         self.bus_spawns[intersection_id] = (x_cor, y_cor)
                                     if j == 3 and lk == 'ingress' and int(lane.ID) == bus_lane:
-                                        print("intersectionID:", intersection_id, " bus_lane:",
-                                            int(self.bus_lanes[intersection_id]))
                                         self.grid.place_agent(lane.car_lists[1], (
                                             x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
                                             y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
@@ -237,37 +226,23 @@ class RoadModel(Model):
                     lane.car_lists[1].add_car(Vehicle(self))
                 else:
                     lane.car_lists[0].add_car(Vehicle(self))
-                # print(len(lane.car_lists[0].cars))
-
-            if int(lane.ID) == int(self.bus_lanes[intersection_id]):
-                print("vehicles: ", len(lane.car_lists[0].cars), "laneID: ", lane.ID)
-            # print("car spawned.")
-            # print("amount of cars", len(lane.car_lists[0].cars))
 
     def despawn_vehicle(self, lane, intersection_id):
         if len(lane.car_lists[0].cars) > 0:
             self.vehicle_graveyard[intersection_id].add_car(lane.car_lists[0].cars[0])
-            lane.car_lists[0].remove_car()
-            # print("car despawned.")
-            # print("amount of cars", len(lane.car_lists[0].cars))	            
+            lane.car_lists[0].remove_car()            
 
     def spawn_bus(self, chance, intersection_id, lane):
         if random.random() < chance:
             bus = Bus(intersection_id, self.bus_weight, self)
             lane.bus = bus
-            print("Bus created id: ", intersection_id)
 
             self.schedule.add(lane.bus)
-            print(self.bus_spawns)
             self.grid.place_agent(lane.bus, self.bus_spawns[intersection_id])
-
-            # print("bus spawned.")
 
     def despawn_bus(self, lane, intersection_id):
         if len(lane.car_lists[0].cars) < 1:
-            self.vehicle_graveyard[intersection_id].add_bus(lane.bus)            
-            print("lane_id: ", lane.ID, " cars: ", len(lane.car_lists[0].cars))
-            print("despawned")
+            self.vehicle_graveyard[intersection_id].add_bus(lane.bus)
 
             try:
                 self.grid.remove_agent(lane.bus)
@@ -275,15 +250,10 @@ class RoadModel(Model):
             except ValueError:
                 pass
             lane.bus = None
-            print("Bus removed id: ", intersection_id)
             if len(lane.car_lists[1].cars) > 0:
-                print("list 1: ", len(lane.car_lists[1].cars))
-                print("list 0: ", len(lane.car_lists[0].cars))
                 for i in lane.car_lists[1].cars:
                     lane.car_lists[0].add_car(i)
                 lane.car_lists[1].clear_cars()
-
-            # print("bus despawned.")
 
     def increase_waiting_time(self, lane):
         if len(lane.car_lists[0].cars) > 0:
@@ -325,7 +295,6 @@ class RoadModel(Model):
         returns avg. waiting time per bus in intersection 1
         """
         if len(self.vehicle_graveyard[0].busses) > 0:
-            print("bus in graveyard 1")
             wait_times = []
             for bus in self.vehicle_graveyard[0].busses:
                 wait_times.append(bus.wait_time)
@@ -338,7 +307,6 @@ class RoadModel(Model):
         returns avg. waiting time per bus in intersection 2
         """
         if len(self.vehicle_graveyard[1].busses) > 0:
-            print("bus in graveyard 2")
             wait_times = []
             for bus in self.vehicle_graveyard[1].busses:
                 wait_times.append(bus.wait_time)
