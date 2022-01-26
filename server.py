@@ -129,18 +129,18 @@ dim = dimensions
 canvas_element = CanvasGrid(lane_draw, dim[0], dim[1], (dim[0] * 10), (dim[1] * 10))
 
 chart = ChartModule(
-	[
-		{"Label": "cars_1", "Color": "Green"},
-		{"Label": "cars_2", "Color": "Blue"},
-		{"Label": "busses_1", "Color": "Red"},
-		{"Label": "busses_2", "Color": "Orange"}
-	]
+    [
+        {"Label": "cars_1", "Color": "Green"},
+        {"Label": "cars_2", "Color": "Blue"},
+        {"Label": "busses_1", "Color": "Red"},
+        {"Label": "busses_2", "Color": "Orange"}
+    ]
 )
 
 model_params = {
-    'green_length': UserSettableParameter("number", "Green Light Duration", 15),
-    'orange_length': UserSettableParameter("number", "Orange Light Duration", 5, ),
-    'bus_weight': UserSettableParameter("number", "Bus Weight", 50, ),
+    'green_length': UserSettableParameter("number", "Green Light Duration", 36),
+    'orange_length': UserSettableParameter("number", "Orange Light Duration", 6, ),
+    'bus_weight': UserSettableParameter("number", "Bus Weight", 5, ),
     'traffic_light_priority': UserSettableParameter('checkbox', 'traffic_light_priority', value=True),
     'ci': ci,
     'pity_timer_limit': UserSettableParameter("number", "Pity Timer Limit", 120),

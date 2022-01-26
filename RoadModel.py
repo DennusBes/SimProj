@@ -29,7 +29,7 @@ class RoadModel(Model):
         self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(self.ci.dimensions[0], self.ci.dimensions[1], torus=False)
         self.bus_spawns = [None for _ in self.ci.intersections_list]
-        self.vehicle_graveyard = [VehicleGraveyard(int(i.ID)) for i in self.ci.intersections_list]
+        self.vehicle_graveyard = [VehicleGraveyard(int(i.ID)) for i in self.ci.intersections_list[::-1]]
 
         self.create_roads()
         # self.create_filler_roads()
