@@ -45,10 +45,16 @@ def calculate_yellow_light(speed_limit):
 
 def calculate_red_clearence_interval(speed_limit, width):
     v = 11.369 + (speed_limit * 0.02 * 3.6 / 1.609344 * 0.8846)
-    W = 3.28084/100 * width
+
+    # distance to cross the intersection in ft
+    W = 3.28084 * width
+
+    # car length in ft
     L = 20
 
     R = (W + L) / (1.47 * v)
 
     return R
+
+
 

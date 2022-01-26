@@ -14,10 +14,11 @@ from VehicleGraveyard import VehicleGraveyard
 
 class RoadModel(Model):
 
-    def __init__(self, green_length, orange_length, bus_weight, traffic_light_priority, ci,
+    def __init__(self, green_length, orange_length,red_clearance_time, bus_weight, traffic_light_priority, ci,
                  pity_timer_limit, car_spawn_rate):
 
         super().__init__()
+        self.red_clearance_time = red_clearance_time
         self.car_spawn_rate = car_spawn_rate
         self.pity_timer_limit = pity_timer_limit
         self.bus_weight = bus_weight
@@ -204,6 +205,8 @@ class RoadModel(Model):
         if intersection.step_at_change + self.green_length == current_step and lane.signal_group.state == 'green':
             lane.signal_group.change_state('orange')
         if intersection.step_at_change + self.green_length + self.orange_length == current_step:
+            lane.signal_group.change_state('red')
+        if intersection.step_at_change + self.green_length + self.orange_length + self.red_clearance_time == current_step:
             lane.signal_group.change_state('red')
             if self.traffic_light_priority:
                 pity = intersection.pity_traffic_light
