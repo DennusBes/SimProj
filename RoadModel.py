@@ -42,6 +42,8 @@ class RoadModel(Model):
             if intersection is not None:
                 intersection_id = intersection.ID
 
+                self.create_filler_roads(intersection)
+
                 # print(intersection_id)
                 for lk in ['ingress', 'egress']:
 
@@ -106,22 +108,25 @@ class RoadModel(Model):
                                             x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
                                             y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
 
-    def create_filler_roads(self):
+    def create_filler_roads(self, intersection):
 
         """ place FillerRoad agents between the lanes
 
         """
 
-        x, y = self.intersection.center
+
+        x, y = intersection.center
         x, y = int(x), int(y)
-        mid_square = self.intersection.mid_square
-        sep = self.intersection.sep
+
+        mid_square = intersection.mid_square
+        sep = intersection.sep
 
         sep = sep - 1
         lst = list(range(x - mid_square - sep, x + 1 + mid_square + sep))
+        lst2 = list(range(y - mid_square - sep, y + 1 + mid_square + sep))
 
         for i in lst:
-            for j in lst:
+            for j in lst2:
                 self.grid.place_agent(FillerRoad(i + j), (i, j))
 
     def step(self):
@@ -237,6 +242,7 @@ class RoadModel(Model):
             print("Bus created id: ", intersection_id)
 
             self.schedule.add(lane.bus)
+            print(self.bus_spawns)
             self.grid.place_agent(lane.bus, self.bus_spawns[intersection_id])
 
             # print("bus spawned.")
