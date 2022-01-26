@@ -296,6 +296,67 @@ class RoadModel(Model):
         if lane.bus is not None:
             lane.bus.increase_wait_time()
 
+    def car_wait_time_1(self):
+        """
+        returns avg. waiting time per car in intersection 1
+        """
+        if len(self.vehicle_graveyard[0].cars) > 0:
+            wait_times = []
+            for car in self.vehicle_graveyard[0].cars:
+                wait_times.append(car.wait_time)
+            return sum(wait_times)/len(wait_times)
+        else:
+            return 0
+
+    def car_wait_time_2(self):
+        """
+        returns avg. waiting time per car in intersection 2
+        """
+        if len(self.vehicle_graveyard[1].cars) > 0:
+            wait_times = []
+            for car in self.vehicle_graveyard[1].cars:
+                wait_times.append(car.wait_time)
+            return sum(wait_times)/len(wait_times)
+        else:
+            return 0            
+
+    def bus_wait_time_1(self):
+        """
+        returns avg. waiting time per bus in intersection 1
+        """
+        if len(self.vehicle_graveyard[0].busses) > 0:
+            print("bus in graveyard 1")
+            wait_times = []
+            for bus in self.vehicle_graveyard[0].busses:
+                wait_times.append(bus.wait_time)
+            return sum(wait_times)/len(wait_times)
+        else:
+            return 0
+
+    def bus_wait_time_2(self):
+        """
+        returns avg. waiting time per bus in intersection 2
+        """
+        if len(self.vehicle_graveyard[1].busses) > 0:
+            print("bus in graveyard 2")
+            wait_times = []
+            for bus in self.vehicle_graveyard[1].busses:
+                wait_times.append(bus.wait_time)
+            return sum(wait_times)/len(wait_times)
+        else:
+            return 0 
+
+    def increase_waiting_time(self, lane):
+        if len(lane.car_lists[0].cars) > 0:
+            for car in lane.car_lists[0].cars:
+                car.increase_wait_time()
+        if len(lane.car_lists[1].cars) > 0:
+            for car in lane.car_lists[1].cars:
+                car.increase_wait_time()
+
+        if lane.bus is not None:
+            lane.bus.increase_wait_time()
+
     def check_for_pity_timer(self, intersection):
 
         if intersection is not None:
