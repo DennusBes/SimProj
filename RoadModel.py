@@ -12,17 +12,18 @@ from Vehicle import Vehicle
 
 class RoadModel(Model):
 
-    def __init__(self, intersection, green_length, orange_length, bus_weight, traffic_light_priority, ci):
+    def __init__(self, green_length, orange_length, bus_weight, traffic_light_priority, ci,
+                 pity_timer_limit):
 
         super().__init__()
 
+        self.pity_timer_limit = pity_timer_limit
         self.bus_weight = bus_weight
         self.traffic_light_priority = traffic_light_priority
         self.ci = ci
         self.bus_lanes = self.ci.bus_lanes
         self.green_length = green_length
         self.orange_length = orange_length
-        self.intersection = intersection
         self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(self.ci.dimensions[0], self.ci.dimensions[1], torus=False)
         self.bus_spawns = [None for _ in self.ci.intersections_list]
@@ -133,6 +134,8 @@ class RoadModel(Model):
             if intersection is not None:
                 intersection_id = intersection.ID
 
+                intersection.pity_traffic_light = self.check_for_pity_timer(intersection)
+
                 groups = intersection.ingress_groups
 
                 for group in groups:
@@ -153,7 +156,7 @@ class RoadModel(Model):
                                 if lane.signal_group.state == 'green' and lane.bus is not None:
                                     self.despawn_bus(lane, intersection_id)
 
-    def get_traffic_prio(self, groups, intersection):
+    def get_traffic_prio(self, groups, intersection, pity_light):
 
         prio_dict = {}
         for group in groups:
@@ -167,29 +170,35 @@ class RoadModel(Model):
 
                     try:
                         prio_dict[lane.signal_group.ID] += (
-                                    len(lane.car_lists[0].cars) + len(lane.car_lists[1].cars) + bus_weight)
+                                len(lane.car_lists[0].cars) + len(lane.car_lists[1].cars) + bus_weight)
                     except KeyError:
                         prio_dict[lane.signal_group.ID] = (
-                                    len(lane.car_lists[0].cars) + len(lane.car_lists[1].cars) + bus_weight)
+                                len(lane.car_lists[0].cars) + len(lane.car_lists[1].cars) + bus_weight)
 
         combos = intersection.traffic_light_combos
-
+        if pity_light is not None:
+            combos = ([i for i in combos if pity_light in i])
+            if len(combos) == 0:
+                combos = intersection.traffic_light_combos
         return combos[np.argmax([sum([prio_dict[x] if x in list(prio_dict.keys()) else 0 for x in i]) for i in combos])]
 
     def traffic_light_control(self, lane, current_step, groups, intersection):
 
         if lane.signal_group.ID not in intersection.current_green:
             lane.signal_group.change_state('red')
+            lane.signal_group.ticks_since_state_change += 1
         if (
                 lane.signal_group.state == 'red' or lane.signal_group.state == 'orange') and lane.signal_group.ID in intersection.current_green and intersection.step_at_change + self.green_length > current_step:
             lane.signal_group.change_state('green')
             intersection.step_at_change = current_step
+            lane.signal_group.ticks_since_state_change = 0
         if intersection.step_at_change + self.green_length == current_step and lane.signal_group.state == 'green':
             lane.signal_group.change_state('orange')
         if intersection.step_at_change + self.green_length + self.orange_length == current_step and lane.signal_group.state == 'orange':
             lane.signal_group.change_state('red')
             if self.traffic_light_priority:
-                intersection.current_green = self.get_traffic_prio(groups, intersection)
+                pity = intersection.pity_traffic_light
+                intersection.current_green = self.get_traffic_prio(groups, intersection, pity)
             else:
                 try:
                     intersection.current_green = intersection.traffic_light_combos[
@@ -200,6 +209,7 @@ class RoadModel(Model):
             intersection.step_at_change = current_step + 1
 
     def spawn_vehicle(self, lane, chance, intersection_id):
+
         if random.random() < chance:
             bus_lane = int(self.bus_lanes[intersection_id])
 
@@ -251,3 +261,20 @@ class RoadModel(Model):
                 lane.car_lists[1].clear_cars()
 
             # print("bus despawned.")
+
+    def check_for_pity_timer(self, intersection):
+
+        if intersection is not None:
+
+            groups = intersection.ingress_groups
+
+            for group in groups:
+                if group is not None:
+                    lanes = group.lanes
+                    for lane in lanes:
+
+                        if self.pity_timer_limit < lane.signal_group.ticks_since_state_change:
+                            return lane.signal_group.ID
+                            continue
+
+            return None

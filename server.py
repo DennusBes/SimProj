@@ -102,19 +102,19 @@ intersection2 = Intersection(xml_to_dict('79190154_BOS210_ITF_COMPLETE.xml'), Tr
                               [12, 22, 24, 31, 32], [3, 24, 37], [22, 28], [1, 22, 24, 37],
                               [12, 22, 24, 28, 31, 32, 37], [12, 22, 24, 28, 31, 32]], [[2, 3], [1, 2], [0, 1]])
 
-ci = ConnectedIntersections([intersection, intersection2], dimensions, bus_lanes=[13, 8])
+ci = ConnectedIntersections([intersection2, intersection], dimensions, bus_lanes=[8, 13])
 
 dim = dimensions
 
 canvas_element = CanvasGrid(lane_draw, dim[0], dim[1], (dim[0] * 10), (dim[1] * 10))
 
 model_params = {
-    "intersection": intersection,
     'green_length': UserSettableParameter("number", "Green Light Duration", 15),
     'orange_length': UserSettableParameter("number", "Orange Light Duration", 5, ),
     'bus_weight': UserSettableParameter("number", "Bus Weight", 50, ),
     'traffic_light_priority': UserSettableParameter('checkbox', 'traffic_light_priority', value=True),
-    'ci': ci
+    'ci': ci,
+    'pity_timer_limit': UserSettableParameter("number", "Pity Timer Limit", 120)
 }
 
 server = ModularServer(

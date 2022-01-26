@@ -17,6 +17,7 @@ class Intersection:
         self.traffic_light_combos = trafic_light_combos
         self.step_at_change = 0
         self.current_green = trafic_light_combos[0]
+        self.pity_traffic_light = None
         self.ID = None
         self.center = None
         self.lane_df = None
