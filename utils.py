@@ -44,6 +44,14 @@ def calculate_yellow_light(speed_limit):
 
 
 def calculate_red_clearence_interval(speed_limit, width):
+    """
+    based on https://onlinepubs.trb.org/onlinepubs/nchrp/docs/NCHRP03-95_FR.pdf
+
+    :param speed_limit: speed limit in 0.02 m/s
+    :param width: highest intersection crossing distance in meters
+    :return: red clearence duration in seconds
+    """
+    # 85th percentile speed of verhicles approaching the intersection in mph
     v = 11.369 + (speed_limit * 0.02 * 3.6 / 1.609344 * 0.8846)
 
     # distance to cross the intersection in ft
@@ -55,6 +63,3 @@ def calculate_red_clearence_interval(speed_limit, width):
     R = (W + L) / (1.47 * v)
 
     return R
-
-
-
