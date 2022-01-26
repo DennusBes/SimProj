@@ -4,9 +4,9 @@ from mesa import Agent
 
 class Bus(Agent):
 
-    def __init__(self, unique_id, model):
+    def __init__(self, unique_id,weight, model):
         super().__init__(unique_id, model)
-        self.weight = 1
+        self.weight = weight
         self.shape = 'bus.png'
         self.color = ''
         self.speed = 0

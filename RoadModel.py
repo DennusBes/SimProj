@@ -159,10 +159,15 @@ class RoadModel(Model):
             if group is not None:
                 lanes = group.lanes
                 for lane in lanes:
+                    if lane.bus is None:
+                        bus_weight = 0
+                    else:
+                        bus_weight = int(lane.bus.weight)
+
                     try:
-                        prio_dict[lane.signal_group.ID] += (len(lane.car_lists[0].cars) + len(lane.car_lists[1].cars))
+                        prio_dict[lane.signal_group.ID] += (len(lane.car_lists[0].cars) + len(lane.car_lists[1].cars) + bus_weight)
                     except KeyError:
-                        prio_dict[lane.signal_group.ID] = (len(lane.car_lists[0].cars) + len(lane.car_lists[1].cars))
+                        prio_dict[lane.signal_group.ID] = (len(lane.car_lists[0].cars) + len(lane.car_lists[1].cars) + bus_weight)
 
         combos = intersection.traffic_light_combos
 
@@ -214,7 +219,7 @@ class RoadModel(Model):
 
     def spawn_bus(self, chance, intersection_id, lane):
         if random.random() < chance:
-            bus = Bus(intersection_id, self)
+            bus = Bus(intersection_id,self.bus_weight, self)
             lane.bus = bus
             print("Bus created id: ", intersection_id)
 
