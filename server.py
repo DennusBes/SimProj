@@ -1,7 +1,7 @@
 import xmltodict
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
-from mesa.visualization.modules import CanvasGrid
+from mesa.visualization.modules import CanvasGrid, ChartModule
 
 import Lane
 from CarQueue import CarQueue
@@ -128,6 +128,15 @@ dim = dimensions
 
 canvas_element = CanvasGrid(lane_draw, dim[0], dim[1], (dim[0] * 10), (dim[1] * 10))
 
+chart = ChartModule(
+	[
+		{"Label": "cars_1", "Color": "Green"},
+		{"Label": "cars_2", "Color": "Blue"},
+		{"Label": "busses_1", "Color": "Red"},
+		{"Label": "busses_2", "Color": "Orange"}
+	]
+)
+
 model_params = {
     'green_length': UserSettableParameter("number", "Green Light Duration", 15),
     'orange_length': UserSettableParameter("number", "Orange Light Duration", 5, ),
@@ -142,7 +151,7 @@ model_params = {
 
 server = ModularServer(
     RoadModel,
-    [canvas_element],
+    [canvas_element, chart],
     "Den Bosch Kruispunt",
     model_params
 )
