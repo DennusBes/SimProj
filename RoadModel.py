@@ -13,10 +13,10 @@ from Vehicle import Vehicle
 class RoadModel(Model):
 
     def __init__(self, green_length, orange_length, bus_weight, traffic_light_priority, ci,
-                 pity_timer_limit):
+                 pity_timer_limit, car_spawn_rate):
 
         super().__init__()
-
+        self.car_spawn_rate = car_spawn_rate
         self.pity_timer_limit = pity_timer_limit
         self.bus_weight = bus_weight
         self.traffic_light_priority = traffic_light_priority
@@ -146,7 +146,7 @@ class RoadModel(Model):
                             bus_lane = int(self.bus_lanes[intersection_id])
                             self.traffic_light_control(lane, current_step, groups, intersection)
 
-                            self.spawn_vehicle(lane, 0.4, intersection_id)
+                            self.spawn_vehicle(lane, self.car_spawn_rate, intersection_id)
                             if lane.signal_group.state == 'green':
                                 self.despawn_vehicle(lane)
 

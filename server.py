@@ -114,7 +114,9 @@ model_params = {
     'bus_weight': UserSettableParameter("number", "Bus Weight", 50, ),
     'traffic_light_priority': UserSettableParameter('checkbox', 'traffic_light_priority', value=True),
     'ci': ci,
-    'pity_timer_limit': UserSettableParameter("number", "Pity Timer Limit", 120)
+    'pity_timer_limit': UserSettableParameter("number", "Pity Timer Limit", 120),
+    'car_spawn_rate': UserSettableParameter("number", "Car Spawn Rate (chance per tick)", 0.04748553240740742),
+
 }
 
 server = ModularServer(
