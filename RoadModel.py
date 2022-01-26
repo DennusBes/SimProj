@@ -14,7 +14,7 @@ from VehicleGraveyard import VehicleGraveyard
 
 class RoadModel(Model):
 
-    def __init__(self, green_length, orange_length,red_clearance_time, bus_weight, traffic_light_priority, ci,
+    def __init__(self, green_length, orange_length, red_clearance_time, bus_weight, traffic_light_priority, ci,
                  pity_timer_limit, car_spawn_rate):
 
         super().__init__()
@@ -259,47 +259,38 @@ class RoadModel(Model):
                     lane.car_lists[0].add_car(i)
                 lane.car_lists[1].clear_cars()
 
-
     def car_wait_time_1(self):
         """
         returns avg. waiting time per car in intersection 1
         """
 
-        if len(self.vehicle_graveyard[0].cars) > 0:
-
-            return np.mean([car.wait_time for car in self.vehicle_graveyard[0].cars])
-        else:
-            return 0
+        return np.mean([car.wait_time for car in self.vehicle_graveyard[0].cars]) if len(
+            self.vehicle_graveyard[0].cars) > 0 else 0
 
     def car_wait_time_2(self):
         """
         returns avg. waiting time per car in intersection 2
         """
-        if len(self.vehicle_graveyard[1].cars) > 0:
 
-            return np.mean([car.wait_time for car in self.vehicle_graveyard[1].cars])
-        else:
-            return 0
+        return np.mean([car.wait_time for car in self.vehicle_graveyard[1].cars]) if len(
+            self.vehicle_graveyard[1].cars) > 0 else 0
 
     def bus_wait_time_1(self):
+
         """
         returns avg. waiting time per bus in intersection 1
         """
-        if len(self.vehicle_graveyard[0].busses) > 0:
 
-            return np.mean([bus.wait_time for bus in self.vehicle_graveyard[0].busses])
-        else:
-            return 0
+        return np.mean([bus.wait_time for bus in self.vehicle_graveyard[0].busses]) if len(
+            self.vehicle_graveyard[0].busses) > 0 else 0
 
     def bus_wait_time_2(self):
         """
         returns avg. waiting time per bus in intersection 2
         """
-        if len(self.vehicle_graveyard[1].busses) > 0:
 
-            return np.mean([bus.wait_time for bus in self.vehicle_graveyard[1].busses])
-        else:
-            return 0
+        return np.mean([bus.wait_time for bus in self.vehicle_graveyard[1].busses]) if len(
+            self.vehicle_graveyard[1].busses) > 0 else 0
 
     def increase_waiting_time(self, lane):
 
