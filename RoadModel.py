@@ -161,6 +161,7 @@ class RoadModel(Model):
                     if group is not None:
                         lanes = group.lanes
                         for lane in lanes:
+                            self.increase_waiting_time(lane)
 
                             bus_lane = int(self.bus_lanes[intersection_id])
                             self.traffic_light_control(lane, current_step, groups, intersection)
@@ -281,6 +282,17 @@ class RoadModel(Model):
                 lane.car_lists[1].clear_cars()
 
             # print("bus despawned.")
+
+    def increase_waiting_time(self, lane):
+        if len(lane.car_lists[0].cars) > 0:
+            for car in lane.car_lists[0].cars:
+                car.increase_wait_time()
+        if len(lane.car_lists[1].cars) > 0:
+            for car in lane.car_lists[1].cars:
+                car.increase_wait_time()
+
+        if lane.bus is not None:
+            lane.bus.increase_wait_time()
 
     def check_for_pity_timer(self, intersection):
 
