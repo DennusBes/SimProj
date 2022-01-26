@@ -8,7 +8,7 @@ from mesa.time import BaseScheduler
 from Bus import Bus
 from FillerRoad import FillerRoad
 from Vehicle import Vehicle
-
+from VehicleGraveyard import VehicleGraveyard
 
 class RoadModel(Model):
 
@@ -27,6 +27,7 @@ class RoadModel(Model):
         self.schedule = BaseScheduler(self)
         self.grid = MultiGrid(self.ci.dimensions[0], self.ci.dimensions[1], torus=False)
         self.bus_spawns = [None for _ in self.ci.intersections_list]
+        self.vehicle_graveyard = [VehicleGraveyard(i) for i in range(len(self.ci.intersections_list))]
 
         self.create_roads()
         # self.create_filler_roads()
@@ -103,7 +104,7 @@ class RoadModel(Model):
                                         self.bus_spawns[intersection_id] = (x_cor, y_cor)
                                     if j == 3 and lk == 'ingress' and int(lane.ID) == bus_lane:
                                         print("intersectionID:", intersection_id, " bus_lane:",
-                                              int(self.bus_lanes[intersection_id]))
+                                            int(self.bus_lanes[intersection_id]))
                                         self.grid.place_agent(lane.car_lists[1], (
                                             x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
                                             y_pos + eval(f"{lk}_dir_keys")[counter + 1][1] * i))
