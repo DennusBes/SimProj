@@ -140,6 +140,7 @@ class RoadModel(Model):
                     if group is not None:
                         lanes = group.lanes
                         for lane in lanes:
+
                             bus_lane = int(lane.bus.buslane[intersection_id])                                
                             self.traffic_light_control(lane, current_step, groups, intersection)
 
@@ -198,9 +199,9 @@ class RoadModel(Model):
             bus_lane = int(lane.bus.buslane[intersection_id])
 
             if self.bus_agent[intersection_id] != None and int(lane.ID) == bus_lane:
-                lane.car_lists[1].add_car(Vehicle(5, self))
+                lane.car_lists[1].add_car(Vehicle(self))
             else:
-                lane.car_lists[0].add_car(Vehicle(5, self))
+                lane.car_lists[0].add_car(Vehicle(self))
             # print(len(lane.car_lists[0].cars))
 
             if int(lane.ID) == int(lane.bus.buslane[intersection_id]):
