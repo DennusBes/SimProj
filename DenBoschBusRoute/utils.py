@@ -1,3 +1,5 @@
+import xmltodict
+
 def get_traffic_combos(df, frac):
     df = df.sample(frac=frac)
 
@@ -57,3 +59,20 @@ def calculate_red_clearance_interval(speed_limit, width):
     R = (W + L) / (1.47 * v)
 
     return R
+
+
+
+def xml_to_dict(filename):
+    """convert the xml-file to a pyhton dict
+
+    Args:
+        filename: root of the xml-file
+
+    Returns: python dictionary of the xml-file
+
+    """
+    with open(filename) as t:
+        data = t.read()
+        xmldict = xmltodict.parse(data)
+    return xmldict
+

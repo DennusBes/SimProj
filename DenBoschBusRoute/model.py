@@ -13,7 +13,7 @@ from DenBoschBusRoute.agent import Vehicle
 
 class RoadModel(Model):
 
-    def __init__(self, green_length, orange_length, red_clearance_time, bus_weight, traffic_light_priority, ci,
+    def __init__(self, green_length, orange_length, red_clearance_time, bus_weight, traffic_light_priority, create_ci,
                  pity_timer_limit, car_spawn_rate, car_despawn_rate, bus_spawn_rate):
 
         super().__init__()
@@ -24,7 +24,8 @@ class RoadModel(Model):
         self.pity_timer_limit = pity_timer_limit
         self.bus_weight = bus_weight
         self.traffic_light_priority = traffic_light_priority
-        self.ci = ci
+        self.ci = None
+        create_ci(self)
         self.bus_lanes = self.ci.bus_lanes
         self.green_length = green_length
         self.orange_length = orange_length
@@ -36,6 +37,8 @@ class RoadModel(Model):
         self.create_roads()
         # self.create_filler_roads()
 
+        print(self.ci)
+
         self.datacollector = DataCollector(
             model_reporters={
                 "cars_1": self.car_wait_time_1,
@@ -46,6 +49,8 @@ class RoadModel(Model):
         )
         self.running = True
         self.datacollector.collect(self)
+
+
 
     def create_roads(self):
         """ Places the lane agents on the canvas
