@@ -1,6 +1,12 @@
 import xmltodict
 
 def get_traffic_combos(df, frac):
+    """
+
+    :param df: dataframe of the intersection csv that tracks traffic light activation per ms
+    :param frac: what fraction of the df to use
+    :return: all traffic light combinations for an intersection
+    """
     df = df.sample(frac=frac)
 
     combos = []
@@ -63,14 +69,14 @@ def calculate_red_clearance_interval(speed_limit, width):
 
 
 def xml_to_dict(filename):
-    """convert the xml-file to a pyhton dict
+    """
+    convert an XML-file to a python dict
 
-    Args:
-        filename: root of the xml-file
-
-    Returns: python dictionary of the xml-file
+    :param filename: root of the xml-file
+    :return: python dictionary of the xml-file
 
     """
+
     with open(filename) as t:
         data = t.read()
         xmldict = xmltodict.parse(data)

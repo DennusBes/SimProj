@@ -13,6 +13,10 @@ from DenBoschBusRoute.utils import calculate_yellow_light, calculate_red_clearan
 
 
 def create_CI(self):
+
+    """
+    creates the connected intersection object
+    """
     intersection1 = Intersection(utils.xml_to_dict('DenBoschBusRoute/resources/data/79190154_BOS210_ITF_COMPLETE.xml'),
                                  True,
                                  [[5, 11], [3, 22], [1, 3, 22, 24, 41], [3, 4, 5], [4, 5, 41], [3, 5, 38], [3, 4],
@@ -115,12 +119,12 @@ def create_CI(self):
 
 
 def lane_draw(agent):
-    """ draw agents on the Mesa canvas
-
-    Args:
-        agent: the agent that gets drawn on the canvas
-
     """
+    draw agents on the Mesa canvas
+
+    :param agent: the agent that gets drawn on the canvas
+    """
+
 
     if isinstance(agent, Lane):
         text = ''
@@ -144,7 +148,7 @@ def lane_draw(agent):
                 'text': text, 'text_color': 'white'}
 
 
-dimensions = (90, 90)
+dimensions = (84, 84)
 
 canvas_element = CanvasGrid(lane_draw, dimensions[0], dimensions[1], (dimensions[0] * 10), (dimensions[1] * 10))
 

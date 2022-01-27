@@ -15,6 +15,10 @@ class ConnectedIntersections:
         self.fill_all_intersections()
 
     def fill_intersections_matrix(self):
+        """
+        fills the intersection matrix with intersection objects
+
+        """
 
         il = self.intersections_list.copy()
 
@@ -30,6 +34,11 @@ class ConnectedIntersections:
                     continue
 
     def create_centerpoints(self):
+        """
+        create centerpoint attributes for the intersections based on their place in the ConnectedIntersection
+
+        """
+
         x_base = self.dimensions[1] / 3
         y_base = self.dimensions[0]
         for count_1, i in enumerate(self.intersections):
@@ -44,6 +53,10 @@ class ConnectedIntersections:
                     j.center = ((int(np.mean((x_upper_lim, x_lower_lim))), int(np.mean((y_upper_lim, y_lower_lim)))))
 
     def fill_all_intersections(self):
+        """
+        call remaining functions of the intersection objects outside the constructor
+
+        """
 
         for count_1, i in enumerate(self.intersections):
             for count_2, j in enumerate(i):
@@ -75,13 +88,11 @@ class Intersection:
         self.egress_groups = None
 
     def set_group_numbers(self, kind):
-        """ returns a list with the numbers of the lanegroups that should be created for ingress/egress
+        """
+        returns a list with the numbers of the lanegroups that should be created for ingress/egress
 
-        Args:
-            kind: ingress or egress
-
-        Returns: a list of the numbers of lanegroups
-
+        :param kind: ingress or egress
+        :return: a list of the numbers of lanegroups
         """
 
         gn = list(set(list(set(eval(f'self.lane_df.{kind}Approach')))))
@@ -90,13 +101,11 @@ class Intersection:
         return sorted([int(x) for x in gn])
 
     def set_lane_groups(self, kind):
-        """ create the lanegroup objects for this intersection
+        """
+        create the lanegroup objects for this intersection
 
-        Args:
-            kind: ingress or egress
-
-        Returns: a list of lanegroup objects
-
+        :param kind: ingress or egress
+        :return: a list of lanegroup objects
         """
 
         mid_square = self.mid_square
@@ -135,8 +144,21 @@ class Intersection:
         return groups
 
     def turn_intersection(self, lst):
+        """
+        turns the intersection or flips lanes based on a list of instructions
+
+        :param lst: list of turn instructions
+        """
 
         def swap(i1, i2, lst):
+            """
+            swap lanegroups
+
+            :param i1: lanegroup 1
+            :param i2: lanegroup 2
+            :param lst: swap instructions
+            :return: list of lanegroups
+            """
             lst[i1], lst[i2] = lst[i2], lst[i1]
 
             return lst
@@ -147,6 +169,10 @@ class Intersection:
         return lst
 
     def set_lane_df(self):
+        """
+        create a df with lane data
+
+        """
 
         self.lane_df = pd.DataFrame([x for x in
                                      self.xml_dict['topology']['mapData']['intersections']['intersectionGeometry'][
@@ -156,6 +182,10 @@ class Intersection:
                                          7] == '0'])
 
     def fill_intersection(self):
+        """
+        execute functions to fill the remainder of the intersection
+
+        """
 
         self.lane_df = None
         self.set_lane_df()
@@ -192,10 +222,8 @@ class LaneGroup:
         self.order_lanes()
 
     def order_lanes(self):
-        """ changes the order of the lanes based on 'maneuvers' in the XML file
-
-        Args:
-            flip: reverses the egress lane list
+        """
+        changes the order of the lanes based on 'maneuvers' in the XML file
 
         """
 
@@ -215,13 +243,11 @@ class LaneGroup:
             self.lanes.sort(key=lambda x: x.lat, reverse=rev)
 
     def get_lane_connections(self, lane_id):
-        """ gets a dictionary of lane connections for a specific lane
+        """
+        gets a dictionary of lane connections for a specific lane
 
-        Args:
-            lane_id: the id of the lane
-
-        Returns: a dictionary of lane connections
-
+        :param lane_id: lane_id: the id of the lane
+        :return: a dictionary of lane connections
         """
 
         xml = self.intersection.xml_dict['topology']['mapData']['intersections']['intersectionGeometry']['laneSet'][
@@ -268,9 +294,10 @@ class LaneGroup:
             return None
 
     def get_lanes(self):
-        """ create lanes based on the xml-file
-
         """
+        create lanes based on the xml-file
+        """
+
         df = self.lane_df
 
         lane_numbers = list(df[['laneID']][df[f'{self.kind}Approach'].astype(str) == str(int(self.ID))]['laneID'])
@@ -306,6 +333,10 @@ class Lane:
         self.get_signal_group()
 
     def get_signal_group(self):
+        """
+        get the signalgroup for a specific lane
+
+        """
         xml_dict = \
             self.intersection.xml_dict['topology']['mapData']['intersections']['intersectionGeometry']['laneSet'][
                 'genericLane']
@@ -324,6 +355,11 @@ class Lane:
                                                      self)
 
     def get_signalgroup_dict(self):
+        """
+        returns a dictionary that converts raw signalgroup numbers to real traffic light numbers
+
+        :return: a signalgroup dictionary
+        """
 
         sg_xml = self.intersection.xml_dict
         signalgroups = \
@@ -350,6 +386,9 @@ class TrafficLight:
         self.lane = lane
 
     def change_state(self, state):
+        """
+        changes a traffic light state
+        """
         self.state = state
 
 
@@ -363,6 +402,7 @@ class Vehicle(Agent):
         self.wait_time = 0
 
     def increase_wait_time(self):
+
         self.wait_time += 1
 
 
@@ -380,6 +420,7 @@ class Bus(Agent):
         self.wait_time = 0
 
     def increase_wait_time(self):
+
         self.wait_time += 1
 
 
