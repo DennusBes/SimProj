@@ -54,7 +54,7 @@ def calculate_red_clearance_interval(speed_limit, width):
     W = 3.28084 * width
 
     # car length in ft
-    L = 20
+    L = 13
 
     R = (W + L) / (1.47 * v)
 

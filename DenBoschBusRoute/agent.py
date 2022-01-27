@@ -358,7 +358,7 @@ class Vehicle(Agent):
     def __init__(self, model):
         super().__init__(self, model)
 
-        self.shape = 'clear.png'
+        self.shape = 'DenBoschBusRoute/resources/images/clear.png'
         self.color = ''
         self.wait_time = 0
 
@@ -371,7 +371,7 @@ class Bus(Agent):
     def __init__(self, unique_id, weight, model):
         super().__init__(unique_id, model)
         self.weight = weight
-        self.shape = 'bus.png'
+        self.shape = 'DenBoschBusRoute/resources/images/bus.png'
         self.color = ''
         self.speed = 0
         self.layer = 2
@@ -388,7 +388,7 @@ class CarQueue:
     def __init__(self, id):
         self.cars = []
         self.color = 'black'
-        self.shape = 'clear.png'
+        self.shape = 'DenBoschBusRoute/resources/images/clear.png'
         self.ID = id
 
     def add_car(self, car):

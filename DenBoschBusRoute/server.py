@@ -1,4 +1,4 @@
-import xmltodict
+import numpy as np
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
 from mesa.visualization.modules import CanvasGrid, ChartModule
@@ -13,8 +13,6 @@ from DenBoschBusRoute.utils import calculate_yellow_light, calculate_red_clearan
 
 
 def create_CI(self):
-
-
     intersection1 = Intersection(utils.xml_to_dict('DenBoschBusRoute/resources/data/79190154_BOS210_ITF_COMPLETE.xml'),
                                  True,
                                  [[5, 11], [3, 22], [1, 3, 22, 24, 41], [3, 4, 5], [4, 5, 41], [3, 5, 38], [3, 4],
@@ -146,21 +144,6 @@ def lane_draw(agent):
                 'text': text, 'text_color': 'white'}
 
 
-def xml_to_dict(filename):
-    """convert the xml-file to a pyhton dict
-
-    Args:
-        filename: root of the xml-file
-
-    Returns: python dictionary of the xml-file
-
-    """
-    with open(filename) as t:
-        data = t.read()
-        xmldict = xmltodict.parse(data)
-    return xmldict
-
-
 dimensions = (90, 90)
 
 canvas_element = CanvasGrid(lane_draw, dimensions[0], dimensions[1], (dimensions[0] * 10), (dimensions[1] * 10))
@@ -174,12 +157,13 @@ chart = ChartModule(
     ]
 )
 
-max_speed = int(xml_to_dict('DenBoschBusRoute/resources/data/79190154_BOS210_ITF_COMPLETE.xml')['topology']['mapData'][
-                    'intersections']['intersectionGeometry'][
-                    'speedLimits']['regulatorySpeedLimit']['speed'])
+max_speed = int(
+    utils.xml_to_dict('DenBoschBusRoute/resources/data/79190154_BOS210_ITF_COMPLETE.xml')['topology']['mapData'][
+        'intersections']['intersectionGeometry'][
+        'speedLimits']['regulatorySpeedLimit']['speed'])
 
-yellow_light_duration = round(calculate_yellow_light(max_speed))
-red_clearance_time = round(calculate_red_clearance_interval(max_speed, 52))
+yellow_light_duration = np.ceil(calculate_yellow_light(max_speed))
+red_clearance_time = np.ceil(calculate_red_clearance_interval(max_speed, 52.48))
 
 model_params = {
     'green_length': UserSettableParameter("number", "Green Light Duration", 36),
