@@ -3,12 +3,12 @@ from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
 from mesa.visualization.modules import CanvasGrid, ChartModule
 
-import Lane
-from CarQueue import CarQueue
-from ConnectedIntersections import ConnectedIntersections
-from Intersection import Intersection
 from RoadModel import RoadModel
-from TrafficLight import TrafficLight
+from agent import CarQueue
+from agent import ConnectedIntersections
+from agent import Intersection
+from agent import Lane
+from agent import TrafficLight
 from utils import calculate_yellow_light, calculate_red_clearance_interval
 
 
@@ -20,7 +20,7 @@ def lane_draw(agent):
 
     """
 
-    if isinstance(agent, Lane.Lane):
+    if isinstance(agent, Lane):
         text = ''
     elif isinstance(agent, CarQueue):
         text = len(agent.cars)

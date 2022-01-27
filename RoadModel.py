@@ -2,14 +2,13 @@ import random
 
 import numpy as np
 from mesa import Model
+from mesa.datacollection import DataCollector
 from mesa.space import MultiGrid
 from mesa.time import BaseScheduler
-from mesa.datacollection import DataCollector
 
-from Bus import Bus
-from FillerRoad import FillerRoad
-from Vehicle import Vehicle
-from VehicleGraveyard import VehicleGraveyard
+from agent import Bus
+from agent import FillerRoad
+from agent import Vehicle
 
 
 class RoadModel(Model):
@@ -317,3 +316,19 @@ class RoadModel(Model):
                             continue
 
             return None
+
+
+class VehicleGraveyard:
+
+    def __init__(self, i):
+        self.cars = []
+        self.ID = i
+        self.busses = []
+
+    def add_car(self,car):
+
+        self.cars.append(car)
+
+    def add_bus(self,car):
+
+        self.busses.append(car)
