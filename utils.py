@@ -1,6 +1,3 @@
-import pandas as pd
-
-
 def get_traffic_combos(df, frac):
     df = df.sample(frac=frac)
 
@@ -43,7 +40,7 @@ def calculate_yellow_light(speed_limit):
     return Y
 
 
-def calculate_red_clearence_interval(speed_limit, width):
+def calculate_red_clearance_interval(speed_limit, width):
     """
     based on https://onlinepubs.trb.org/onlinepubs/nchrp/docs/NCHRP03-95_FR.pdf
 

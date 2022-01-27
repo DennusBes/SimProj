@@ -9,7 +9,7 @@ from ConnectedIntersections import ConnectedIntersections
 from Intersection import Intersection
 from RoadModel import RoadModel
 from TrafficLight import TrafficLight
-from utils import calculate_yellow_light, calculate_red_clearence_interval
+from utils import calculate_yellow_light, calculate_red_clearance_interval
 
 
 def lane_draw(agent):
@@ -144,7 +144,7 @@ max_speed = int(intersection1.xml_dict['topology']['mapData']['intersections']['
                     'speedLimits']['regulatorySpeedLimit']['speed'])
 
 yellow_light_duration = round(calculate_yellow_light(max_speed))
-red_clearence_time = round(calculate_red_clearence_interval(max_speed, 52))
+red_clearence_time = round(calculate_red_clearance_interval(max_speed, 52))
 
 model_params = {
     'green_length': UserSettableParameter("number", "Green Light Duration", 36),
