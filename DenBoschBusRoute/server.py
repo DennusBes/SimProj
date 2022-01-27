@@ -9,7 +9,7 @@ from DenBoschBusRoute.agent import Intersection
 from DenBoschBusRoute.agent import Lane
 from DenBoschBusRoute.agent import TrafficLight
 from DenBoschBusRoute.model import RoadModel
-from utils import calculate_yellow_light, calculate_red_clearance_interval
+from DenBoschBusRoute.utils import calculate_yellow_light, calculate_red_clearance_interval
 
 
 def lane_draw(agent):
@@ -122,10 +122,9 @@ intersection1 = Intersection(xml_to_dict('DenBoschBusRoute/resources/data/791901
                               [22, 24, 32, 37, 41], [12, 22, 28, 41], [12, 24, 37], [12, 22, 24, 28, 31, 41],
                               [12, 22, 24, 28, 41], [12, 22, 31, 32], [3, 22, 28, 41], [3, 22, 24, 37], [3, 4, 28, 41],
                               [3, 24, 37, 41], [1, 22, 24, 37], [24, 37, 41], [1, 22, 32, 41], [12, 22, 24, 32, 37, 41],
-                              [1, 22, 32], [1, 3, 22, 32], [12, 22, 31, 32, 41], [12, 24, 37, 41]],
-                             [[2, 3], [1, 2], [0, 1]])
+                              [1, 22, 32], [1, 3, 22, 32], [12, 22, 31, 32, 41], [12, 24, 37, 41]], [[0,1],[1,3], [2,1]])
 
-ci = ConnectedIntersections([intersection1, intersection2], dimensions, bus_lanes=[8, 12])
+ci = ConnectedIntersections([intersection1, intersection2], dimensions, bus_lanes=[1, 12])
 
 dim = dimensions
 
@@ -156,6 +155,7 @@ model_params = {
     'pity_timer_limit': UserSettableParameter("number", "Pity Timer Limit", 120),
     'car_spawn_rate': UserSettableParameter("number", "Car Spawn Rate (chance per tick)",
                                             round(0.04748553240740742, 4)),
+    'car_despawn_rate': UserSettableParameter("number", "Car Despawn rate (every x ticks)", 3),
 
 }
 

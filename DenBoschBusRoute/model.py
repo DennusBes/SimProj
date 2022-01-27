@@ -14,9 +14,10 @@ from DenBoschBusRoute.agent import Vehicle
 class RoadModel(Model):
 
     def __init__(self, green_length, orange_length, red_clearance_time, bus_weight, traffic_light_priority, ci,
-                 pity_timer_limit, car_spawn_rate):
+                 pity_timer_limit, car_spawn_rate, car_despawn_rate):
 
         super().__init__()
+        self.car_despawn_rate = car_despawn_rate
         self.red_clearance_time = red_clearance_time
         self.car_spawn_rate = car_spawn_rate
         self.pity_timer_limit = pity_timer_limit
@@ -155,15 +156,15 @@ class RoadModel(Model):
                             bus_lane = int(self.bus_lanes[intersection_id])
                             self.traffic_light_control(lane, current_step, groups, intersection)
 
-                            self.spawn_vehicle(lane, self.car_spawn_rate, intersection_id)
+                            self.spawn_vehicle(lane, self.car_spawn_rate, intersection)
                             if lane.signal_group.state == 'green':
-                                self.despawn_vehicle(lane, intersection_id)
+                                self.despawn_vehicle(lane, intersection)
 
                             if int(lane.ID) == bus_lane:
                                 if lane.bus is None:
-                                    self.spawn_bus(0.1, intersection_id, lane)
+                                    self.spawn_bus(0.1, intersection, lane)
                                 if lane.signal_group.state == 'green' and lane.bus is not None:
-                                    self.despawn_bus(lane, intersection_id)
+                                    self.despawn_bus(lane, intersection)
 
     def get_traffic_prio(self, groups, intersection, pity_light):
 
@@ -220,32 +221,34 @@ class RoadModel(Model):
 
             intersection.step_at_change = current_step + 1
 
-    def spawn_vehicle(self, lane, chance, intersection_id):
+    def spawn_vehicle(self, lane, chance, intersection):
 
         if random.random() < chance:
-            bus_lane = int(self.bus_lanes[intersection_id])
+            bus_lane = int(self.bus_lanes[intersection.ID])
             if lane.shared_with[4] != '1':
                 if lane.bus is not None and int(lane.ID) == bus_lane:
                     lane.car_lists[1].add_car(Vehicle(self))
                 else:
                     lane.car_lists[0].add_car(Vehicle(self))
 
-    def despawn_vehicle(self, lane, intersection_id):
+    def despawn_vehicle(self, lane, intersection):
         if len(lane.car_lists[0].cars) > 0:
-            self.vehicle_graveyard[intersection_id].add_car(lane.car_lists[0].cars[0])
-            lane.car_lists[0].remove_car()
+            steps = self.schedule.steps - intersection.step_at_change
+            if steps == 0 or steps % self.car_despawn_rate == 0:
+                self.vehicle_graveyard[intersection.ID].add_car(lane.car_lists[0].cars[0])
+                lane.car_lists[0].remove_car()
 
-    def spawn_bus(self, chance, intersection_id, lane):
+    def spawn_bus(self, chance, intersection, lane):
         if random.random() < chance:
-            bus = Bus(intersection_id, self.bus_weight, self)
+            bus = Bus(intersection.ID, self.bus_weight, self)
             lane.bus = bus
 
             self.schedule.add(lane.bus)
-            self.grid.place_agent(lane.bus, self.bus_spawns[intersection_id])
+            self.grid.place_agent(lane.bus, self.bus_spawns[intersection.ID])
 
-    def despawn_bus(self, lane, intersection_id):
+    def despawn_bus(self, lane, intersection):
         if len(lane.car_lists[0].cars) < 1:
-            self.vehicle_graveyard[intersection_id].add_bus(lane.bus)
+            self.vehicle_graveyard[intersection.ID].add_bus(lane.bus)
 
             try:
                 self.grid.remove_agent(lane.bus)
@@ -325,10 +328,8 @@ class VehicleGraveyard:
         self.ID = i
         self.busses = []
 
-    def add_car(self,car):
-
+    def add_car(self, car):
         self.cars.append(car)
 
-    def add_bus(self,car):
-
+    def add_bus(self, car):
         self.busses.append(car)
