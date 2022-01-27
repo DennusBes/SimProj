@@ -3,12 +3,12 @@ from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
 from mesa.visualization.modules import CanvasGrid, ChartModule
 
-from RoadModel import RoadModel
-from agent import CarQueue
-from agent import ConnectedIntersections
-from agent import Intersection
-from agent import Lane
-from agent import TrafficLight
+from DenBoschBusRoute.agent import CarQueue
+from DenBoschBusRoute.agent import ConnectedIntersections
+from DenBoschBusRoute.agent import Intersection
+from DenBoschBusRoute.agent import Lane
+from DenBoschBusRoute.agent import TrafficLight
+from DenBoschBusRoute.model import RoadModel
 from utils import calculate_yellow_light, calculate_red_clearance_interval
 
 
@@ -60,7 +60,7 @@ def xml_to_dict(filename):
 dimensions = (90, 90)
 
 # {'1': '3', '3': '1', '2':'4'}
-intersection2 = Intersection(xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml'), False,
+intersection2 = Intersection(xml_to_dict('DenBoschBusRoute/resources/data/7919015E_BOS211_ITF_COMPLETE.xml'), False,
                              [[6, 7, 9], [9, 10], [5, 6, 11, 26, 36], [6, 11, 26, 37], [6, 7], [5, 11, 26, 36],
                               [5, 11, 26, 36, 37], [5, 6, 11, 26, 36, 37], [6, 9], [5, 6, 26], [11, 26, 37],
                               [10, 24, 35], [5, 6], [6, 11, 26, 36], [24, 35, 38], [7, 9], [5, 11, 26, 37],
@@ -87,7 +87,7 @@ intersection2 = Intersection(xml_to_dict('7919015E_BOS211_ITF_COMPLETE.xml'), Fa
                               [11, 24, 26, 28, 36, 37], [5, 11, 26, 28, 36], [11, 24, 26, 28, 35],
                               [5, 11, 26, 28, 37, 38], [5, 26, 28, 38]], [[2, 3], [1, 2], [0, 1]])
 
-intersection1 = Intersection(xml_to_dict('79190154_BOS210_ITF_COMPLETE.xml'), True,
+intersection1 = Intersection(xml_to_dict('DenBoschBusRoute/resources/data/79190154_BOS210_ITF_COMPLETE.xml'), True,
                              [[5, 11], [3, 22], [1, 3, 22, 24, 41], [3, 4, 5], [4, 5, 41], [3, 5, 38], [3, 4],
                               [5, 12, 28, 31], [3, 5], [4, 5], [1, 3, 24], [5, 41], [1, 3, 41], [5, 11, 41], [3, 41],
                               [1, 3], [11, 38, 41], [4, 12], [4, 5, 12, 41], [11, 41], [1, 3, 24, 41], [4, 5, 12],

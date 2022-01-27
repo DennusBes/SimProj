@@ -6,9 +6,9 @@ from mesa.datacollection import DataCollector
 from mesa.space import MultiGrid
 from mesa.time import BaseScheduler
 
-from agent import Bus
-from agent import FillerRoad
-from agent import Vehicle
+from DenBoschBusRoute.agent import Bus
+from DenBoschBusRoute.agent import FillerRoad
+from DenBoschBusRoute.agent import Vehicle
 
 
 class RoadModel(Model):

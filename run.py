@@ -1,4 +1,4 @@
-from server import server
+from DenBoschBusRoute.server import server
 
 if __name__ == "__main__":
     server.launch()
