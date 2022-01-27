@@ -155,7 +155,9 @@ model_params = {
     'pity_timer_limit': UserSettableParameter("number", "Pity Timer Limit", 120),
     'car_spawn_rate': UserSettableParameter("number", "Car Spawn Rate (chance per tick)",
                                             round(0.04748553240740742, 4)),
+
     'car_despawn_rate': UserSettableParameter("number", "Car Despawn rate (every x ticks)", 3),
+    'bus_spawn_rate': UserSettableParameter("number", "Bus Spawn Rate (every x ticks)", 30),
 
 }
 

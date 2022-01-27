@@ -14,9 +14,10 @@ from DenBoschBusRoute.agent import Vehicle
 class RoadModel(Model):
 
     def __init__(self, green_length, orange_length, red_clearance_time, bus_weight, traffic_light_priority, ci,
-                 pity_timer_limit, car_spawn_rate, car_despawn_rate):
+                 pity_timer_limit, car_spawn_rate, car_despawn_rate, bus_spawn_rate):
 
         super().__init__()
+        self.bus_spawn_rate = bus_spawn_rate
         self.car_despawn_rate = car_despawn_rate
         self.red_clearance_time = red_clearance_time
         self.car_spawn_rate = car_spawn_rate
@@ -162,7 +163,7 @@ class RoadModel(Model):
 
                             if int(lane.ID) == bus_lane:
                                 if lane.bus is None:
-                                    self.spawn_bus(0.1, intersection, lane)
+                                    self.spawn_bus(intersection, lane)
                                 if lane.signal_group.state == 'green' and lane.bus is not None:
                                     self.despawn_bus(lane, intersection)
 
@@ -238,8 +239,8 @@ class RoadModel(Model):
                 self.vehicle_graveyard[intersection.ID].add_car(lane.car_lists[0].cars[0])
                 lane.car_lists[0].remove_car()
 
-    def spawn_bus(self, chance, intersection, lane):
-        if random.random() < chance:
+    def spawn_bus(self, intersection, lane):
+        if self.schedule.steps % self.bus_spawn_rate == 0:
             bus = Bus(intersection.ID, self.bus_weight, self)
             lane.bus = bus
 
