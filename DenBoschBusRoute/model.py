@@ -35,7 +35,6 @@ class RoadModel(Model):
         self.vehicle_graveyard = [VehicleGraveyard(int(i.ID)) for i in self.ci.intersections_list[::-1]]
 
         self.create_roads()
-        # self.create_filler_roads()
 
         print(self.ci)
 
@@ -57,7 +56,6 @@ class RoadModel(Model):
         """
 
         for intersection in self.ci.intersections.reshape(1, 9)[0]:
-            # blijkbaar staat 6 voor de eerste intersection en 7 voor de tweede
 
             if intersection is not None:
                 intersection_id = intersection.ID
@@ -70,7 +68,7 @@ class RoadModel(Model):
 
                     dir_keys = {1: (0, +1), 2: (+1, 0), 3: (0, -1), 4: (-1, 0)}
 
-                    # These are the direcion keys that fill in the roads
+                    # These are the direcion keys that fill in the roads (for future use)
                     ingress_dir_keys = {1: (+1, 0), 2: (0, -1), 3: (-1, 0), 4: (0, +1)}
                     egress_dir_keys = {1: (-1, 0), 2: (0, +1), 3: (+1, 0), 4: (0, -1)}
 
@@ -95,8 +93,6 @@ class RoadModel(Model):
 
                                         if j == 1:
                                             ind = 0
-                                        # if j == 3 and int(lane.ID) == int(lane.bus.buslane):
-                                        #     ind = 1
 
                                         self.grid.place_agent(lane.car_lists[ind], (
                                             x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
@@ -270,6 +266,7 @@ class RoadModel(Model):
         :param lane: lane
         :param intersection: intersection
         """
+
         if len(lane.car_lists[0].cars) > 0:
             steps = self.schedule.steps - intersection.step_at_change
             if steps == 0 or steps % self.car_despawn_rate == 0:
@@ -283,6 +280,7 @@ class RoadModel(Model):
         :param intersection: intersection
         :param lane: lane
         """
+
         if self.schedule.steps % self.bus_spawn_rate == 0:
             bus = Bus(intersection.ID, self.bus_weight, self)
             lane.bus = bus
@@ -291,13 +289,13 @@ class RoadModel(Model):
             self.grid.place_agent(lane.bus, self.bus_spawns[intersection.ID])
 
     def despawn_bus(self, lane, intersection):
-
         """
         despawn a bus if it can go through a green light
 
         :param lane: lane
         :param intersection: intersection
         """
+
         if len(lane.car_lists[0].cars) < 1:
             self.vehicle_graveyard[intersection.ID].add_bus(lane.bus)
 
