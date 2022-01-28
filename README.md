@@ -1,29 +1,13 @@
-# Traffic Simulation (Nagel–Schreckenberg model)
-
-Dit project is gebaseerd op het Nagel-Schreckenberg Model. 
-
-Om het project goed te laten werken maak een een nieuwe environment aan en install de requirements:
-```bash
-python -m venv venv
-python install -r requirements.txt 
-```
-
-Om de simulatie te starten, voer het run.py bestand uit met het volgende command:
-```bash
-python run.py
-```
-
-Als je de resultaten wilt bekijken van de simulatie voer je eerst het bastand batch_run.py uit en open dan
-de jupyter notebook om de resultaten te analyseren. batch_run.py creëert een csv bestand met de resultaten
-van de simulatie.
-
-```bash
-python batch_run.py
-```
+In deze file staat wat uitleg over wat de verschillende files in de repo doen.
 
 
-### Opdracht 4 documentatie:
-https://docs.google.com/document/d/1jMGRe8P2QmqsME-wBT0S2mup9UvI2CANRiykTe9TJxA/edit?usp=sharing
-
-### Opdracht 5 documentatie:
-https://docs.google.com/document/d/1DoHg-RBEGJW77PAZUlPa_2euhOEHp7qfAanp_cnFvxI/edit?usp=sharing
+- .gitignore: gitignore
+- batch_run.py: de code om batch runs van de simulatie uit te voeren
+- requirements.txt: required imports
+- run.py: run this file to start the mesa simulation environment
+- DenBoschBusRoute: map met alle simulatie code
+    - resources: data files en images
+    - agent.py: classes voor alle agents (de hele connected intersection structuur)
+    - model.py: de code om agents te plaatsen en de simulatie uit te voeren
+    - server.py: hier wordt het model aangeroepen, we geven hier parameters mee aand het model zoals een functie die de busroute maakt
+    - utils.py: willekeurige functies zoals het omzetten van de xml files naar python dicts
