@@ -43,8 +43,6 @@ class RoadModel2(Model):
         self.vehicle_graveyard = [VehicleGraveyard(int(i.ID)) for i in self.ci.intersections_list[::-1]]
 
         self.create_roads()
-        # self.create_filler_roads()
-        # print(self.ci)
 
         self.datacollector = DataCollector(
             model_reporters={
@@ -73,8 +71,6 @@ class RoadModel2(Model):
         )
         self.running = True
         self.datacollector.collect(self)
-
-
 
     def create_roads(self):
         """ Places the lane agents on the canvas
@@ -120,8 +116,6 @@ class RoadModel2(Model):
 
                                         if j == 1:
                                             ind = 0
-                                        # if j == 3 and int(lane.ID) == int(lane.bus.buslane):
-                                        #     ind = 1
 
                                         self.grid.place_agent(lane.car_lists[ind], (
                                             x_pos + eval(f"{lk}_dir_keys")[counter + 1][0] * i,
@@ -163,6 +157,10 @@ class RoadModel2(Model):
                 self.grid.place_agent(FillerRoad(i + j), (i, j))
 
     def step(self):
+        """
+        the main simulation loop, everything in here gets executed every simulation tick
+
+        """
 
         self.schedule.step()
         self.datacollector.collect(self)
@@ -197,6 +195,14 @@ class RoadModel2(Model):
                                     self.despawn_bus(lane, intersection)
 
     def get_traffic_prio(self, groups, intersection, pity_light):
+        """
+        get the traffic light combination with the longest queue
+
+        :param groups: lanegroup
+        :param intersection: intersection
+        :param pity_light: combinations must contain pity light (can be None)
+        :return: traffic light combination with the longest queue
+        """
 
         prio_dict = {}
         for group in groups:
@@ -223,6 +229,14 @@ class RoadModel2(Model):
         return combos[np.argmax([sum([prio_dict[x] if x in list(prio_dict.keys()) else 0 for x in i]) for i in combos])]
 
     def traffic_light_control(self, lane, current_step, groups, intersection):
+        """
+        traffic light cycle controller
+
+        :param lane: lane
+        :param current_step: current simulation step
+        :param groups: lanegroup
+        :param intersection: intersection
+        """
 
         if lane.signal_group.ID not in intersection.current_green:
             lane.signal_group.change_state('red')
@@ -252,6 +266,13 @@ class RoadModel2(Model):
             intersection.step_at_change = current_step + 1
 
     def spawn_vehicle(self, lane, chance, intersection):
+        """
+        chance to spawn a vehicle
+
+        :param lane: lane
+        :param chance: chance to spawn vehicle every tick
+        :param intersection: intersection
+        """
 
         if random.random() < chance:
             bus_lane = int(self.bus_lanes[intersection.ID])
@@ -262,6 +283,13 @@ class RoadModel2(Model):
                     lane.car_lists[0].add_car(Vehicle(self))
 
     def despawn_vehicle(self, lane, intersection):
+        """
+        despawn a verhicle every 'car_despawn_rate' ticks
+
+        :param lane: lane
+        :param intersection: intersection
+        """
+
         if len(lane.car_lists[0].cars) > 0:
             steps = self.schedule.steps - intersection.step_at_change
             if steps == 0 or steps % self.car_despawn_rate == 0:
@@ -269,6 +297,13 @@ class RoadModel2(Model):
                 lane.car_lists[0].remove_car()
 
     def spawn_bus(self, intersection, lane):
+        """
+        spawn a bus every 'bus_spawn_rate' ticks
+
+        :param intersection: intersection
+        :param lane: lane
+        """
+
         if self.schedule.steps % self.bus_spawn_rate == 0:
             bus = Bus(intersection.ID, self.bus_weight, self)
             lane.bus = bus
@@ -277,6 +312,13 @@ class RoadModel2(Model):
             self.grid.place_agent(lane.bus, self.bus_spawns[intersection.ID])
 
     def despawn_bus(self, lane, intersection):
+        """
+        despawn a bus if it can go through a green light
+
+        :param lane: lane
+        :param intersection: intersection
+        """
+
         if len(lane.car_lists[0].cars) < 1:
             self.vehicle_graveyard[intersection.ID].add_bus(lane.bus)
 
@@ -330,7 +372,7 @@ class RoadModel2(Model):
 # MEDIAN
     def car_wait_median_1(self):
         """
-        returns avg. waiting time per car in intersection 1
+        returns the median waiting time per car in intersection 1
         """
 
         return round(np.median([car.wait_time for car in self.vehicle_graveyard[0].cars]),2) if len(
@@ -338,7 +380,7 @@ class RoadModel2(Model):
 
     def car_wait_median_2(self):
         """
-        returns avg. waiting time per car in intersection 2
+        returns the median time per car in intersection 2
         """
 
         return round(np.median([car.wait_time for car in self.vehicle_graveyard[1].cars]),2) if len(
@@ -347,7 +389,7 @@ class RoadModel2(Model):
     def bus_wait_median_1(self):
 
         """
-        returns avg. waiting time per bus in intersection 1
+        returns the median time per bus in intersection 1
         """
 
         return round(np.median([round(bus.wait_time,2) for bus in self.vehicle_graveyard[0].busses]),2) if len(
@@ -355,7 +397,7 @@ class RoadModel2(Model):
 
     def bus_wait_median_2(self):
         """
-        returns avg. waiting time per bus in intersection 2
+        returns the median time per bus in intersection 2
         """
 
         return round(np.median([bus.wait_time for bus in self.vehicle_graveyard[1].busses]),2) if len(
@@ -366,7 +408,7 @@ class RoadModel2(Model):
 # STD
     def car_wait_std_1(self):
         """
-        returns avg. waiting time per car in intersection 1
+        returns the std of the waiting time per car in intersection 1
         """
 
         return round(np.std([car.wait_time for car in self.vehicle_graveyard[0].cars]),2) if len(
@@ -374,7 +416,7 @@ class RoadModel2(Model):
 
     def car_wait_std_2(self):
         """
-        returns avg. waiting time per car in intersection 2
+        returns the std of the waiting time per car in intersection 2
         """
 
         return round(np.std([car.wait_time for car in self.vehicle_graveyard[1].cars]),2) if len(
@@ -383,7 +425,7 @@ class RoadModel2(Model):
     def bus_wait_std_1(self):
 
         """
-        returns avg. waiting time per bus in intersection 1
+        returns the std of the waiting time per bus in intersection 1
         """
 
         return round(np.std([bus.wait_time for bus in self.vehicle_graveyard[0].busses]),2) if len(
@@ -391,16 +433,18 @@ class RoadModel2(Model):
 
     def bus_wait_std_2(self):
         """
-        returns avg. waiting time per bus in intersection 2
+        returns the std of the waiting time per bus in intersection 2
         """
 
         return round(np.std([bus.wait_time for bus in self.vehicle_graveyard[1].busses]),2) if len(
             self.vehicle_graveyard[1].busses) > 0 else 0
 
+
+
 # MAX
     def car_max_wait_1(self):
         """
-        returns avg. waiting time per car in intersection 1
+        returns the max waiting time per car in intersection 1
         """
 
         return np.max([car.wait_time for car in self.vehicle_graveyard[0].cars]) if len(
@@ -408,7 +452,7 @@ class RoadModel2(Model):
 
     def car_max_wait_2(self):
         """
-        returns avg. waiting time per car in intersection 2
+        returns the max waiting time per car in intersection 2
         """
 
         return np.max([car.wait_time for car in self.vehicle_graveyard[1].cars]) if len(
@@ -417,7 +461,7 @@ class RoadModel2(Model):
     def bus_max_wait_1(self):
 
         """
-        returns avg. waiting time per bus in intersection 1
+        returns the max waiting time per bus in intersection 1
         """
 
         return np.max([bus.wait_time for bus in self.vehicle_graveyard[0].busses]) if len(
@@ -425,15 +469,18 @@ class RoadModel2(Model):
 
     def bus_max_wait_2(self):
         """
-        returns avg. waiting time per bus in intersection 2
+        returns the max waiting time per bus in intersection 2
         """
 
         return np.max([bus.wait_time for bus in self.vehicle_graveyard[1].busses]) if len(
             self.vehicle_graveyard[1].busses) > 0 else 0
 
-
-
     def increase_waiting_time(self, lane):
+        """
+        increase the wait time attribute of all cars in a specific lane
+
+        :param lane: lane
+        """
 
         for i in range(2):
             for car in lane.car_lists[i].cars:
@@ -443,6 +490,12 @@ class RoadModel2(Model):
             lane.bus.increase_wait_time()
 
     def check_for_pity_timer(self, intersection):
+        """
+        check for every traffic light if they've been inactive for 'pity_timer_limit' ticks, if True, return the traffic light ID
+
+        :param intersection: intersection
+        :return: traffic_light_id or None
+        """
 
         if intersection is not None:
 
@@ -461,9 +514,17 @@ class RoadModel2(Model):
 
 
     def track_params(self):
+        """
+        returns the input of the chosen parameter
+        """
+
         return (self.bus_weight)
 
     def track_run(self):
+        """
+        returns the id of the current simulation. 
+        increase by 1 per iteration when run with Batch Runner
+        """
         return self.uid
 
 
@@ -481,6 +542,8 @@ br_params = {
     "car_despawn_rate": [3],
     "bus_spawn_rate": [1800],    
 }
+
+# 43200 steps, with 1 step being a second. In total this is 12 hours
 max_steps = 43200
 
 br = BatchRunner(
@@ -502,4 +565,4 @@ if __name__ == "__main__":
 
             br_step_data = br_step_data.append(i_run_data, ignore_index=True)
 
-    br_step_data.to_csv("intersection_test2.csv")
+    br_step_data.to_csv("intersection_simulation.csv")
