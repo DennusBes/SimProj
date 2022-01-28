@@ -3,8 +3,8 @@ In deze file staat wat uitleg over wat de verschillende files in de repo doen.
 
 - .gitignore: gitignore
 - batch_run.py: de code om batch runs van de simulatie uit te voeren
-- requirements.txt: required imports
-- run.py: run this file to start the mesa simulation environment
+- requirements.txt: nodige imports
+- run.py: run deze file om de mesa simulatieomgeving op te starten
 - DenBoschBusRoute: map met alle simulatie code
     - resources: data files en images
     - agent.py: classes voor alle agents (de hele connected intersection structuur)
